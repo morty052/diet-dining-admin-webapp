@@ -1,17 +1,18 @@
 import { useQuery } from '@tanstack/react-query'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/tabs'
 import { AddProductTable, TabsBuilder, StoreTable } from 'src/components'
+import { Lightbulb } from 'lucide-react'
 
 type Props = {}
 
-function AllProducts() {
-  const fetchStores = async () => {
-    const res = await fetch(`http://192.168.100.16:3000/stores/get-all`)
-    const data = await res.json()
-    return data
-    // const res = await fetch(`http://localhost:3000/stores`)
-  }
-
+const fetchStores = async () => {
+  // const res = await fetch(`http://192.168.100.16:3000/stores/get-all`)
+  const res = await fetch(`http://localhost:3000/stores/get-all`)
+  const data = await res.json()
+  console.log(data)
+  return data
+}
+function AllStores() {
   const { data: stores, isLoading } = useQuery(['stores'], fetchStores)
 
   if (!stores) {
@@ -20,16 +21,34 @@ function AllProducts() {
 
   return (
     <div className="">
-      <p className="text-white">Manage your Products</p>
-      <StoreTable stores={stores} />
+      <div className="ml-1 pt-4">
+        <p className="text-white">Manage All Stores</p>
+      </div>
+      <StoreTable title="Manage all stores" stores={stores} />
     </div>
   )
 }
 
-function ManageStoreScreen() {
+function ApprovedStoresScreen() {
+  const { data: stores, isLoading } = useQuery(['stores'], fetchStores)
   return (
     <div className="">
-      <p className="text-white">Delete Product</p>
+      <div className="ml-1 pt-4">
+        <p className="text-white">Manage All Approved Stores</p>
+      </div>
+      <StoreTable title="Manage all stores" stores={stores} />
+    </div>
+  )
+}
+
+function OnboardingStoresScreen() {
+  const { data: stores, isLoading } = useQuery(['stores'], fetchStores)
+  return (
+    <div className="">
+      <div className="ml-1 pt-4">
+        <p className="text-white">Manage All Onboarding Stores</p>
+      </div>
+      <StoreTable title="Manage all stores" stores={stores} />
     </div>
   )
 }
@@ -42,55 +61,27 @@ function Addproduct() {
   )
 }
 
-function ActionTabs() {
-  const TabButton = () => {
-    return (
-      // <div className="flex gap-x-4">
-      //   <p className="text-white">Add Product</p>
-      //   <p className="text-white">Delete Product</p>
-      //   <p className="text-white">Edit Product</p>
-      // </div>
-      <Tabs defaultValue="account" className="w-[400px]">
-        <TabsList>
-          <TabsTrigger value="account">Account</TabsTrigger>
-          <TabsTrigger value="password">Password</TabsTrigger>
-        </TabsList>
-        <TabsContent value="account">Make changes to your account here.</TabsContent>
-        <TabsContent value="password">Change your password here.</TabsContent>
-      </Tabs>
-    )
-  }
-
-  return (
-    <div className="">
-      <div className="">
-        <TabButton />
-      </div>
-    </div>
-  )
-}
-
 const tabItems = [
   {
     title: 'All',
     value: 'all',
-    component: <AllProducts />,
+    component: <AllStores />,
   },
   {
     title: 'Approved',
     value: 'approved',
-    component: <AddProductTable />,
+    component: <ApprovedStoresScreen />,
   },
   {
     title: 'Onboarding',
     value: 'onboarding',
-    component: <ManageStoreScreen />,
+    component: <OnboardingStoresScreen />,
   },
-  {
-    title: 'Paused',
-    value: 'paused',
-    component: <ManageStoreScreen />,
-  },
+  // {
+  //   title: 'Paused',
+  //   value: 'paused',
+  //   component: <ApprovedStoresScreen />,
+  // },
 ]
 
 const products = [
@@ -119,7 +110,7 @@ const products = [
 
 export function StoreManager({}: Props) {
   return (
-    <div className="mx-auto max-w-5xl px-4 pt-6">
+    <div className="mx-auto max-w-7xl px-2 pt-6">
       <TabsBuilder defaultValue={tabItems?.[0].value} tabItems={tabItems} />
       <div className=" pt-6"></div>
     </div>

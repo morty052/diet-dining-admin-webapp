@@ -5,6 +5,7 @@ import { Store } from '../store'
 import Orders from '../orders'
 import { StoreManager } from '../store-manager'
 import { Chart, AxisOptions } from 'react-charts'
+import { StoreOnboarding } from '../store-onboarding'
 
 type DailyStars = {
   date: Date
@@ -132,22 +133,24 @@ function DownLoadReportButton() {
 function Header() {
   const id = localStorage.getItem('id')
   return (
-    <div className="flex w-full items-center justify-between rounded-md border border-white px-4 py-2">
-      <p className="text-gray-50">Dashboard</p>
-      {/* LINKS */}
-      <div className="hidden gap-4 sm:flex">
-        <Link to={'/dashboard/' + id} className="text-sm text-white">
-          Overview
-        </Link>
-        <Link to={'orders/' + id} className="text-sm text-white">
-          Orders
-        </Link>
-        <Link to={'store/' + id} className="text-sm text-white">
-          Stores
-        </Link>
-        <p className="text-sm text-white">Notifications</p>
+    <div className="p-2">
+      <div className=" flex w-full items-center justify-between rounded-md border border-white px-4 py-2">
+        <p className="text-gray-50">Dashboard</p>
+        {/* LINKS */}
+        <div className="hidden gap-4 sm:flex">
+          <Link to={'/dashboard/' + id} className="text-sm text-white">
+            Overview
+          </Link>
+          <Link to={'orders/' + id} className="text-sm text-white">
+            Orders
+          </Link>
+          <Link to={'store/' + id} className="text-sm text-white">
+            Stores
+          </Link>
+          <p className="text-sm text-white">Notifications</p>
+        </div>
+        <div className="h-8 w-8 rounded-full border border-white"></div>
       </div>
-      <div className="h-8 w-8 rounded-full border border-white"></div>
     </div>
   )
 }
@@ -181,18 +184,6 @@ export function Dashboard({}: Props) {
       {/* HEADER */}
       <Header />
       {/* Container */}
-      {/* <div className="grid gap-4 pt-6 ">
-          <div className=" flex justify-between">
-            <QuickActionsTab />
-            <DownLoadReportButton />
-          </div>
-          <div className="grid gap-4 pt-4 sm:grid-cols-3">
-            <DashboardInfoCard title="Total Revenue" />
-            <DashboardInfoCard title="Sales" />
-            <DashboardInfoCard title="Pending Orders" />
-          </div>
-          <RecentSalesCard />
-        </div> */}
       <Routes>
         <Route path="/:id" element={<OverView />} />
         <Route path="/orders/:id" element={<Orders />} />

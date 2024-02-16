@@ -3,7 +3,7 @@ import { createHashRouter, RouteObject, createBrowserRouter, createRoutesFromEle
 import ErrorPage from './components/error-page'
 import { getDefaultLayout } from './components/layout'
 import HomePage from './pages/home'
-import { Dashboard } from './pages'
+import { Dashboard, StoreOnboarding } from './pages'
 
 export const routerObjects: RouteObject[] = [
   {
@@ -18,6 +18,7 @@ export const router = createBrowserRouter(
       <Route path="/" element={<HomePage />} />
       <Route path="/login/*" element={<HomePage />} />
       <Route path="/dashboard/*" element={<Dashboard />} />
+      <Route path="/store-onboarding/:id/*" element={<StoreOnboarding />} />
     </>,
   ),
 )
