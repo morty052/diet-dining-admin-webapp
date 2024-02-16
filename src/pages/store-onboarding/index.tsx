@@ -32,7 +32,7 @@ function DefaultScreen(params: type) {
           <p className="text-3xl font-medium text-white">Select Entitty to Onboard</p>
           <div className="flex gap-x-4">
             <ChoiceBox onClick={() => navigate('new-store')} title="Employee" />
-            <ChoiceBox onClick={() => navigate('new-store')} title="Affiliate" />
+            <ChoiceBox onClick={() => navigate('new-employee')} title="Affiliate" />
           </div>
         </div>
         <div className="hidden justify-center border sm:flex">
@@ -74,6 +74,31 @@ function MainStoreOnboardingScreen() {
   )
 }
 
+function MainEmployeeOnboardingScreen() {
+  return (
+    <>
+      <div className="mx-auto grid max-w-5xl grid-cols-1 justify-between border sm:grid-cols-2">
+        <div className="flex flex-col justify-center space-y-6 px-2 pb-20">
+          <p className="text-3xl font-medium text-white">Enter the name of the new Employee</p>
+          <div className="flex gap-x-4">
+            <ChoiceBox title="Employee" />
+            <ChoiceBox title="Affiliate" />
+          </div>
+        </div>
+        <div className="hidden justify-center border sm:flex">
+          <img src={testimage} alt="" />
+        </div>
+      </div>
+      <div className="mx-auto max-w-5xl pt-6">
+        <div className="flex items-center gap-x-2">
+          <p className="fontmedium text-sm text-white">Step 1 of 5</p>
+          <ProgressBar progress={20} />
+        </div>
+      </div>
+    </>
+  )
+}
+
 export function StoreOnboarding() {
   return (
     <div className="min-h-screen bg-black">
@@ -81,7 +106,7 @@ export function StoreOnboarding() {
       <Routes>
         <Route path="/" element={<DefaultScreen />} />
         <Route path="/new-store" element={<MainStoreOnboardingScreen />} />
-        <Route path="/new-employee" element={<MainStoreOnboardingScreen />} />
+        <Route path="/new-employee" element={<MainEmployeeOnboardingScreen />} />
       </Routes>
     </div>
   )
