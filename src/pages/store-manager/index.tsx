@@ -1,12 +1,27 @@
+import { useQuery } from '@tanstack/react-query'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/tabs'
 import { AddProductTable, TabsBuilder, StoreTable } from 'src/components'
 
 type Props = {}
 
 function AllProducts() {
+  const fetchStores = async () => {
+    const res = await fetch(`http://192.168.100.16:3000/stores/get-all`)
+    const data = await res.json()
+    return data
+    // const res = await fetch(`http://localhost:3000/stores`)
+  }
+
+  const { data: stores, isLoading } = useQuery(['stores'], fetchStores)
+
+  if (!stores) {
+    return null
+  }
+
   return (
     <div className="">
       <p className="text-white">Manage your Products</p>
+      <StoreTable stores={stores} />
     </div>
   )
 }
