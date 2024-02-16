@@ -131,13 +131,14 @@ export function AddProductTable({ products }: Props) {
             <label className="h-48 w-48 border" htmlFor="img">
               Select Product Image
             </label>
-            <input id="img" onChange={(e) => handleFileChange(e)} type="file" className="hidden text-black" />
+            <input id="img" onChange={(e) => handleFileChange(e)} type="file" className=" text-black" />
           </div>
           <div className="flex flex-col">
             <label className="text-white" htmlFor="">
               Enter Product Name
             </label>
             <input
+              placeholder="Product Name"
               value={newProduct.name}
               onChange={(e) => handleTextChange(e.target.name, e.target.value)}
               name="name"
@@ -151,11 +152,12 @@ export function AddProductTable({ products }: Props) {
               Enter Product Description
             </label>
             <textarea
+              placeholder="Product Description"
               value={newProduct.description}
               onChange={(e) => handleTextChange(e.target.name, e.target.value)}
               name="description"
               rows={4}
-              className="text-black"
+              className="rounded-lg p-2 text-black"
             />
           </div>
           <div className="flex flex-col">

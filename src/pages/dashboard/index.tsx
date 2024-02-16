@@ -1,8 +1,9 @@
 import React from 'react'
-import { Route, Routes, Link } from 'react-router-dom'
+import { Route, Routes, Link, useParams } from 'react-router-dom'
 import { Button } from 'src/components/ui/button'
 import { Store } from '../store'
 import Orders from '../orders'
+import { StoreManager } from '../store-manager'
 import { Chart, AxisOptions } from 'react-charts'
 
 type DailyStars = {
@@ -129,19 +130,20 @@ function DownLoadReportButton() {
 }
 
 function Header() {
+  const id = localStorage.getItem('id')
   return (
     <div className="flex w-full items-center justify-between rounded-md border border-white px-4 py-2">
       <p className="text-gray-50">Dashboard</p>
       {/* LINKS */}
       <div className="hidden gap-4 sm:flex">
-        <Link to={'/dashboard'} className="text-sm text-white">
+        <Link to={'/dashboard/' + id} className="text-sm text-white">
           Overview
         </Link>
-        <Link to={'orders'} className="text-sm text-white">
+        <Link to={'orders/' + id} className="text-sm text-white">
           Orders
         </Link>
-        <Link to={'store'} className="text-sm text-white">
-          Store
+        <Link to={'store/' + id} className="text-sm text-white">
+          Stores
         </Link>
         <p className="text-sm text-white">Notifications</p>
       </div>
@@ -192,9 +194,9 @@ export function Dashboard({}: Props) {
           <RecentSalesCard />
         </div> */}
       <Routes>
-        <Route path="/" element={<OverView />} />
-        <Route path="/orders" element={<Orders />} />
-        <Route path="/store/*" element={<Store />} />
+        <Route path="/:id" element={<OverView />} />
+        <Route path="/orders/:id" element={<Orders />} />
+        <Route path="/store/:id/*" element={<StoreManager />} />
       </Routes>
     </div>
   )
