@@ -3,7 +3,9 @@ import { createHashRouter, RouteObject, createBrowserRouter, createRoutesFromEle
 import ErrorPage from './components/error-page'
 import { getDefaultLayout } from './components/layout'
 import HomePage from './pages/home'
-import { Dashboard, StoreOnboarding } from './pages'
+import { AffiliateDashboard, Dashboard, LoginPage, StoreOnboarding, StorePreview } from './pages'
+import Test from './pages/Test'
+import SocketContextComponent from './contexts/SocketContextComponent'
 
 export const routerObjects: RouteObject[] = [
   {
@@ -15,10 +17,20 @@ export const routerObjects: RouteObject[] = [
 export const router = createBrowserRouter(
   createRoutesFromElements(
     <>
-      <Route path="/" element={<HomePage />} />
-      <Route path="/login/*" element={<HomePage />} />
+      <Route path="/" element={<LoginPage />} />
+      <Route path="/login/*" element={<LoginPage />} />
       <Route path="/dashboard/*" element={<Dashboard />} />
-      <Route path="/store-onboarding/:id/*" element={<StoreOnboarding />} />
+      <Route path="/affiliate/*" element={<AffiliateDashboard />} />
+      <Route path="/store-onboarding/*" element={<StoreOnboarding />} />
+      <Route
+        path="/store-preview/:id/*"
+        element={
+          <SocketContextComponent>
+            <StorePreview />
+          </SocketContextComponent>
+        }
+      />
+      <Route path="/test" element={<Test />} />
     </>,
   ),
 )

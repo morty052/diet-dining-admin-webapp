@@ -1,11 +1,11 @@
 import React from 'react'
-import { Route, Routes, Link, useParams } from 'react-router-dom'
+import { Route, Routes } from 'react-router-dom'
 import { Button } from 'src/components/ui/button'
-import { Store } from '../store'
-import Orders from '../orders'
-import { StoreManager } from '../store-manager'
-import { Chart, AxisOptions } from 'react-charts'
-import { StoreOnboarding } from '../store-onboarding'
+import { BarChart, Header } from 'src/components'
+import Notifications from './routes/Notifications'
+import { useQuery } from '@tanstack/react-query'
+import { AffiliatesManager } from './routes/affiliates-manager'
+import OrdersManager from './routes/OrdersManager'
 
 type DailyStars = {
   date: Date
@@ -48,28 +48,9 @@ const data: Series[] = [
   },
 ]
 
-type Props = {}
-
-const RenderLineChart = () => {
-  const primaryAxis = React.useMemo(
-    (): AxisOptions<DailyStars> => ({
-      getValue: (datum) => datum.date,
-      elementType: 'bar',
-    }),
-    [],
-  )
-
-  const secondaryAxes = React.useMemo((): AxisOptions<DailyStars>[] => [{ getValue: (datum) => datum.stars }], [])
+function DashboardInfoCard({ title, figure }: { title: string; figure: string | number }) {
   return (
-    <div className="max-w-xl flex-1 bg-white">
-      <Chart options={{ data, primaryAxis, secondaryAxes }} />
-    </div>
-  )
-}
-
-function DashboardInfoCard({ title }: { title: string }) {
-  return (
-    <div className="mx-auto w-full  rounded-sm border px-4 py-2">
+    <div className="w-full rounded-sm  border px-4 py-2 lg:w-1/4">
       {/* Header */}
       <div className="flex justify-between">
         <p className="text-white">{title}</p>
@@ -77,34 +58,118 @@ function DashboardInfoCard({ title }: { title: string }) {
       </div>
       {/* Info */}
       <div className="space-y-2">
-        <p className="text-3xl font-semibold text-white">$14,500</p>
+        <p className="text-3xl font-semibold text-white">{figure}</p>
         <p className=" text-gray-300">+0.00 from last month</p>
       </div>
     </div>
   )
 }
 
-function RecentSalesCard({}) {
-  const SaleItem = () => {
+function OverView({ sales, total_revenue }: { sales: number; total_revenue: number }) {
+  return (
+    <div className="">
+      <div className="grid  gap-4 pb-4 md:pb-0  ">
+        {/* DEFAULT LAYOUT INFO CARDS */}
+        <div className="flex flex-col gap-y-4 pt-4 md:hidden">
+          <DashboardInfoCard figure={total_revenue} title="Total Revenue" />
+          <DashboardInfoCard figure={sales} title="Sales" />
+          <DashboardInfoCard figure="14" title="Pending Orders" />
+          <DashboardInfoCard figure="3" title="Active Promos" />
+        </div>
+        <div className="flex flex-col gap-2  pt-4 lg:hidden  ">
+          {/* MEDIUM LAYOUT INFO CARDS */}
+          <div className="hidden gap-x-6 md:flex">
+            <DashboardInfoCard figure={total_revenue} title="Total Revenue" />
+            <DashboardInfoCard figure={sales} title="Sales" />
+          </div>
+          <div className="hidden gap-x-6 md:flex">
+            <DashboardInfoCard figure="14" title="Pending Orders" />
+            <DashboardInfoCard figure="3" title="Active Promos" />
+          </div>
+        </div>
+        {/* LARGER LAYOUT INFO CARDS */}
+        <div className="hidden gap-2  pt-4 lg:flex  ">
+          <DashboardInfoCard figure={total_revenue} title="Total Revenue" />
+          <DashboardInfoCard figure={sales} title="Sales" />
+
+          <DashboardInfoCard figure="14" title="Pending Orders" />
+          <DashboardInfoCard figure="3" title="Active Promos" />
+        </div>
+        <div className="flex w-full flex-col gap-y-8 lg:flex-row-reverse lg:gap-x-8 ">
+          <RecentSalesCard />
+          <BarChart />
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function RecentSalesCard() {
+  const sales = [
+    {
+      customer_name: 'Olivier Martin',
+      customer_email: 'Olivier@gmail.com',
+      price: 330,
+    },
+    {
+      customer_name: 'Andrew Killcoff',
+      customer_email: 'Andrew@gmail.com',
+      price: 1430,
+    },
+    {
+      customer_name: 'Keegan Matthew',
+      customer_email: 'keegan@gmail.com',
+      price: 240,
+    },
+    {
+      customer_name: 'Welma Flintstone',
+      customer_email: 'Welma@gmail.com',
+      price: 320,
+    },
+    {
+      customer_name: 'Patrick Star',
+      customer_email: 'patrick@gmail.com',
+      price: 200,
+    },
+  ]
+
+  const SaleItem = ({
+    customer_name,
+    customer_email,
+    price,
+  }: {
+    customer_name: string
+    customer_email: string
+    price: number
+  }) => {
     return (
       <div className="flex items-center justify-between">
-        <div className="h-8 w-8 rounded-full border border-white"></div>
-        <div className="ml-2 flex-1">
-          <p className="text-white">Olivia martin</p>
-          <p className="text-white">Olivia.martin@email.com</p>
+        <div className="grid h-8 w-8 place-content-center rounded-full border border-white">
+          <p className="font-black text-green-400">{customer_name?.charAt(0)}</p>
         </div>
-        <p className="text-lg font-semibold text-white">$1,990</p>
+        <div className="ml-2 flex-1">
+          <p className="text-gray-50">{customer_name}</p>
+          <p className="text-sm text-gray-50/80 ">{customer_email}</p>
+        </div>
+        <p className="text-lg font-semibold text-white">${price}</p>
       </div>
     )
   }
 
   return (
-    <div className="space-y-4 rounded-lg border p-2">
+    <div className="space-y-4 rounded-lg border border-white/50 p-4 lg:w-2/5">
       <div className="">
         <p className="text-lg font-semibold text-white">Recent Sales</p>
         <p className="text-sm font-semibold text-gray-300">You made 256 sales this month.</p>
       </div>
-      <SaleItem />
+      {sales.map((sale, index) => (
+        <SaleItem
+          key={index}
+          customer_email={sale.customer_email}
+          customer_name={sale.customer_name}
+          price={sale.price}
+        />
+      ))}
     </div>
   )
 }
@@ -130,64 +195,46 @@ function DownLoadReportButton() {
   )
 }
 
-function Header() {
-  const id = localStorage.getItem('id')
+function AdminDashboard() {
+  async function fetchAffiliate() {
+    const _id = localStorage.getItem('_id')
+    const res = await fetch(`http://localhost:3000/affiliates/get-affiliate?afilliate_id=${_id}`)
+    const data = await res.json()
+    console.log(data)
+    return data
+  }
+  const { isLoading, data: affiliate } = useQuery({ queryKey: [''], queryFn: fetchAffiliate })
+
+  // if (isLoading) {
+  //   return null
+  // }
+
+  const { sales, total_revenue } = affiliate ?? {}
+
+  console.log(affiliate)
+
   return (
-    <div className="p-2">
-      <div className=" flex w-full items-center justify-between rounded-md border border-white px-4 py-2">
-        <p className="text-gray-50">Dashboard</p>
-        {/* LINKS */}
-        <div className="hidden gap-4 sm:flex">
-          <Link to={'/dashboard/' + id} className="text-sm text-white">
-            Overview
-          </Link>
-          <Link to={'orders/' + id} className="text-sm text-white">
-            Orders
-          </Link>
-          <Link to={'store/' + id} className="text-sm text-white">
-            Stores
-          </Link>
-          <p className="text-sm text-white">Notifications</p>
-        </div>
-        <div className="h-8 w-8 rounded-full border border-white"></div>
+    <div className="relative px-4 pt-6">
+      <div className="flex justify-end md:justify-between">
+        <p className="hidden text-2xl font-semibold text-white md:block">Dashboard</p>
+        <DownLoadReportButton />
       </div>
+      <OverView total_revenue={total_revenue} sales={sales} />
     </div>
   )
 }
 
-function OverView() {
+export function Dashboard() {
   return (
-    <div className="min-h-screen">
-      <div className="grid  gap-4 px-4 pt-6 ">
-        <div className=" flex justify-between">
-          <QuickActionsTab />
-          <DownLoadReportButton />
-        </div>
-        <div className="grid gap-4 pt-4 sm:grid-cols-3">
-          <DashboardInfoCard title="Total Revenue" />
-          <DashboardInfoCard title="Sales" />
-          <DashboardInfoCard title="Pending Orders" />
-        </div>
-        <RecentSalesCard />
-      </div>
-      {/* <div className="flex  justify-between">
-        <RenderLineChart />
-        <RecentSalesCard />
-      </div> */}
-    </div>
-  )
-}
-
-export function Dashboard({}: Props) {
-  return (
-    <div className=" min-h-screen bg-black">
+    <div className=" mx-auto min-h-screen max-w-7xl bg-darkGrey ">
       {/* HEADER */}
-      <Header />
-      {/* Container */}
+      <Header firstname="Anthony" />
+      {/* ROUTES */}
       <Routes>
-        <Route path="/:id" element={<OverView />} />
-        <Route path="/orders/:id" element={<Orders />} />
-        <Route path="/store/:id/*" element={<StoreManager />} />
+        <Route path="/" element={<AdminDashboard />} />
+        <Route path="/orders/*" element={<OrdersManager />} />
+        <Route path="/store/*" element={<AffiliatesManager />} />
+        <Route path="notifications" element={<Notifications />} />
       </Routes>
     </div>
   )

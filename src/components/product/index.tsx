@@ -1,9 +1,5 @@
 import React from 'react'
 
-type Props = {}
-
-function Product({}: Props) {
+export function Product() {
   return <div>Product</div>
 }
-
-export default Product

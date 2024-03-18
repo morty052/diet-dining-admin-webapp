@@ -11,12 +11,21 @@ module.exports = {
       },
     },
     extend: {
+      screens: {
+        lg: '1024px',
+        xl: '1200px',
+        '2xl': '1400px',
+      },
       colors: {
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
+        dark: '#1C1C1C',
+        light: 'rgb(249 250 251)',
+        darkGrey: '#232323',
+        brandGreen: '#90c466',
         primary: {
           DEFAULT: 'hsl(var(--primary))',
           foreground: 'hsl(var(--primary-foreground))',

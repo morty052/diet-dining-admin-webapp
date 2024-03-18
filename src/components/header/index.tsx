@@ -1,50 +1,175 @@
-import React, { ReactNode } from 'react'
-import { LanguageSelector } from '../language-selector'
-import { Button } from '../ui/button'
-import { useTranslation } from 'react-i18next'
-import { Github } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import React from 'react'
+import { NavLink, useNavigate } from 'react-router-dom'
+import { HeaderDropdown } from './HeaderDropDown'
+import { ArrowLeft, Home, Menu } from 'lucide-react'
+import { motion } from 'framer-motion'
 
-interface IProps {
-  leftNode?: ReactNode
-}
-export function Header({ minimal }: { minimal?: boolean }) {
-  const id = localStorage.getItem('id')
+const Navbarlink = ({ title, path }: { title: string; path: string }) => {
   return (
-    <div className="max-w-7xl p-2">
-      {!minimal ? (
-        <div className=" flex w-full items-center justify-between rounded-md border border-white px-4 py-2">
-          <p className="text-gray-50">Dashboard</p>
-          {/* LINKS */}
-          <div className="hidden gap-4 sm:flex">
-            <Link to={'/dashboard/' + id} className="text-sm text-white">
-              Overview
-            </Link>
-            <Link to={'orders/' + id} className="text-sm text-white">
-              Orders
-            </Link>
-            <Link to={'store/' + id} className="text-sm text-white">
-              Stores
-            </Link>
-            <Link to={'/store-onboarding/' + id} className="text-sm text-white">
-              Onboarding
-            </Link>
-            <p className="text-sm text-white">Notifications</p>
-          </div>
-          <div className="h-8 w-8 rounded-full border border-white"></div>
+    <NavLink
+      end
+      id="navlink"
+      to={`${path}`}
+      // className={`text-sm  text-white transition-all duration-200 ease-in hover:text-green-400 `}
+      className={({ isActive, isPending, isTransitioning }) =>
+        [
+          isActive
+            ? 'text-sm text-green-300 transition-all duration-200 ease-in hover:text-green-400'
+            : 'text-sm text-white transition-all duration-200 ease-in hover:text-green-400',
+        ].join(' ')
+      }
+    >
+      {title}
+    </NavLink>
+  )
+}
+
+function Sidebar({ setOpen }: { setOpen: React.Dispatch<React.SetStateAction<boolean>> }) {
+  return (
+    <motion.div
+      initial={{ x: '-100%' }}
+      animate={{ x: 0 }}
+      className="group fixed bottom-0 top-0 z-50  w-52 flex-col border border-white/10 bg-darkGrey px-2 "
+    >
+      <ul className="flex flex-col space-y-6 ">
+        <div className="flex items-center justify-between">
+          <ArrowLeft onClick={() => setOpen(false)} className="text-white" />
+          <p className=" text-2xl font-semibold text-gray-50 ">
+            Diet <span className="text-green-400">Dining</span>
+          </p>
         </div>
-      ) : (
-        <div className=" mx-auto flex w-full max-w-5xl items-center justify-between rounded-md border border-white px-4 py-2 sm:px-6">
-          <p className="text-gray-50">Diet Dining</p>
-          <div className="flex items-center gap-x-2">
+        <a className="relative flex" href="">
+          <Home className=" text-white" />
+          <span className="hidden text-white group-hover:block">Dashboard</span>
+        </a>
+        <a className="relative flex" href="">
+          <Home className=" text-white" />
+          <span className="hidden text-white group-hover:block">Products</span>
+        </a>
+      </ul>
+    </motion.div>
+  )
+}
+
+const adminLinks = [
+  {
+    path: '/dashboard',
+    title: 'Overview',
+  },
+  {
+    path: '/dashboard/orders',
+    title: 'Orders',
+  },
+  {
+    path: '/dashboard/store',
+    title: 'Stores',
+  },
+  {
+    path: '/store-onboarding',
+    title: 'Onboarding',
+  },
+  {
+    path: '/dashboard/notifications',
+    title: 'Notifications',
+  },
+]
+
+const affiliateLinks = [
+  {
+    path: '/affiliate',
+    title: 'Dashboard',
+  },
+  {
+    path: 'orders',
+    title: 'Orders',
+  },
+  {
+    path: 'store',
+    title: 'Store',
+  },
+  // {
+  //   path: 'products',
+  //   title: 'Products',
+  // },
+  // {
+  //   path: '/notifications',
+  //   title: 'Notifications',
+  // },
+]
+
+export function Header({
+  isAffiliate,
+  firstname,
+  minimal,
+  title,
+}: {
+  minimal?: boolean
+  title?: string
+  isAffiliate?: boolean
+  firstname: string
+}) {
+  const [open, setOpen] = React.useState(false)
+  const navigate = useNavigate()
+  return (
+    <>
+      <div className=" sticky top-0 z-50 max-w-7xl  bg-darkGrey  ">
+        <div className=" mx-auto flex w-full max-w-7xl items-center justify-between  border-b border-white/10 px-4 py-2 sm:px-6">
+          {/* HEADER LEFT */}
+          {!minimal && (
+            <p className="hidden text-2xl font-semibold text-gray-50 md:block">
+              Diet <span className="text-green-400">Dining</span>
+            </p>
+          )}
+
+          {/* SIDEBAR BUTTON */}
+          <Menu onClick={() => setOpen(true)} className="text-white md:hidden" />
+
+          {/* MINIMAL HEADER BACK BUTTON */}
+          {minimal && (
+            <div
+              onClick={() => navigate(isAffiliate ? '/affiliate' : '/dashboard')}
+              className="group hidden cursor-pointer items-center gap-x-2 md:flex"
+            >
+              <ArrowLeft className="text-white transition-all duration-300 ease-in group-hover:text-green-400" />
+              <p className="text-sm text-white transition-all duration-300 ease-in group-hover:text-green-400">Exit</p>
+            </div>
+          )}
+
+          {/* MINIMAL STORE HEADER */}
+          {minimal && <p className="hidden font-medium text-green-400 md:block ">{title}</p>}
+
+          {/* ADMIN LINKS */}
+          {!isAffiliate && !minimal && (
+            <div className="hidden gap-4 sm:flex">
+              {adminLinks.map((link) => (
+                <Navbarlink key={link.path} path={link.path} title={link.title} />
+              ))}
+            </div>
+          )}
+
+          {/* AFFILIATE LINKS */}
+          {isAffiliate && !minimal && (
+            <div className="hidden gap-4 sm:flex">
+              {affiliateLinks.map((link) => (
+                <Navbarlink key={link.path} path={link.path} title={link.title} />
+              ))}
+              <HeaderDropdown />
+            </div>
+          )}
+
+          {/* HEADER RIGHT */}
+          <div className=" flex items-center gap-x-2">
             <div className="flex flex-col">
               <span className="text-xs text-white">Logged in as</span>
-              <span className="text-right text-xs text-white">Anthony</span>
+              <span className="text-right text-xs text-white">{firstname}</span>
             </div>
-            <div className="h-8 w-8 rounded-full border border-white"></div>
+            <div className="grid h-8 w-8 place-content-center rounded-full border border-white">
+              <p className="text-lg font-black text-green-400">A</p>
+            </div>
           </div>
         </div>
-      )}
-    </div>
+      </div>
+      {open && <Sidebar setOpen={setOpen} />}
+    </>
   )
 }

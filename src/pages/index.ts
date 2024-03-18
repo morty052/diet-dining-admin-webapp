@@ -1,2 +1,6 @@
 export * from './dashboard'
 export * from './store-onboarding'
+export * from './login'
+export * from './affiliate-dashboard'
+export * from './products-manager'
+export * from './store-preview'
