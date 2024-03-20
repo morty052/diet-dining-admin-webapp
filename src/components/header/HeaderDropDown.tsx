@@ -36,7 +36,9 @@ export function HeaderDropdown() {
         <DropdownMenuItem onClick={() => navigate('products/add')} className="text-white">
           Add Product
         </DropdownMenuItem>
-        <DropdownMenuItem className="text-white">Edit Product</DropdownMenuItem>
+        <DropdownMenuItem onClick={() => navigate('products/edit')} className="text-white">
+          Edit Product
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   )

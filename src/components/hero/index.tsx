@@ -1,5 +1,3 @@
-import { Rocket, Globe2, Wrench, Zap } from 'lucide-react'
-import { useTranslation } from 'react-i18next'
 import { Button } from '../ui/button'
 import { useState } from 'react'
 import { Route, Routes, useNavigate, useParams } from 'react-router-dom'
@@ -72,37 +70,6 @@ const SecurePassPage = () => {
 }
 
 export const Hero = () => {
-  const { t } = useTranslation()
-  const [email, setEmail] = useState('')
-  const [confirmed, setConfirmed] = useState(false)
-
-  const [otp, setOtp] = useState('')
-
-  async function confirmOtp() {
-    try {
-      const res = await fetch(
-        `http://localhost:3000/admin/confirm-otp?admin_id=4118a74d-0b15-4f81-8cab-135e035cc395&otp=${otp}`,
-      )
-      const data = await res.json()
-      // const status = data?.status
-
-      console.log(data)
-    } catch (error) {
-      console.log(error)
-    }
-  }
-  async function confirmEmail() {
-    try {
-      const res = await fetch(`http://localhost:3000/admin/confirm-admin-email?admin_email=${email}`)
-      const data = await res.json()
-      // const status = data?.status
-
-      console.log(data)
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
   return (
     <div className="flex min-h-screen bg-gradient-to-b from-gray-800 to-gray-900">
       <section className="w-full py-32 md:py-48">

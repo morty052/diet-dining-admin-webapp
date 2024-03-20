@@ -6,6 +6,8 @@ import { Button } from 'src/components/ui/button'
 import { baseUrl } from 'src/constants/baseUrl'
 import { sanityClient } from 'src/lib/sanityClient'
 import { toast } from 'src/components/ui/use-toast'
+import { useParams } from 'react-router-dom'
+import { useQuery } from '@tanstack/react-query'
 
 type TnewProduct = {
   _type: 'products'
@@ -80,7 +82,9 @@ function DietGrid(params: type) {
   )
 }
 
-function NewProductForm() {
+function EditProductForm() {
+  const { id } = useParams()
+
   const categories = [
     {
       value: 'next.js',
@@ -103,8 +107,7 @@ function NewProductForm() {
       label: 'Lunch',
     },
   ]
-  const [product, setProduct] = React.useState<TnewProduct>({
-    _type: 'products',
+  const [product, setProduct] = React.useState({
     name: '',
     description: '',
     price: '',
@@ -117,6 +120,13 @@ function NewProductForm() {
     },
   })
 
+  const fetchProduct = async () => {
+    const res = await fetch(`${baseUrl}/stores/get-single-product?product_id=${id}`)
+    const data = await res.json()
+    console.log(data)
+    return data
+  }
+
   const [storeCategories, setStoreCategories] = React.useState(categories)
   const [defaultCategories, setDefaultCategories] = React.useState(categories)
   const [productMainCategory, setProductMainCategory] = React.useState('')
@@ -126,9 +136,10 @@ function NewProductForm() {
   const [writing, setWriting] = React.useState(false)
   const [loading, setLoading] = React.useState(false)
 
+  const { data: productData, isLoading, refetch } = useQuery({ queryKey: ['v'], queryFn: fetchProduct })
+
   const resetForm = () => {
     setProduct({
-      _type: 'products',
       name: '',
       description: '',
       price: '',
@@ -145,7 +156,6 @@ function NewProductForm() {
     setProductMainCategory('')
     setProductCategory('')
   }
-
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (loading) {
@@ -153,10 +163,6 @@ function NewProductForm() {
     }
     setLoading(true)
     try {
-      if (!image || !product.description || !product.name || !product.price) {
-        alert('Please fill in all fields')
-        return
-      }
       const _id = localStorage.getItem('_id')
       console.log({
         ...product,
@@ -167,27 +173,30 @@ function NewProductForm() {
 
       console.log(image_id)
 
-      const newProduct = {
-        ...product,
-        price: Number(product.price),
-        image: {
-          _type: 'image',
-          asset: {
-            _type: 'reference',
-            _ref: image_id,
+      if (imageFile) {
+        const newProduct = {
+          ...product,
+          price: product.price ? Number(product.price) : productData.price,
+          description: product.description ? product.description : productData.description,
+          image: {
+            _type: 'image',
+            asset: {
+              _type: 'reference',
+              _ref: image_id,
+            },
           },
-        },
+        }
+        const res = await fetch(`${baseUrl}/affiliates/add-product?affiliate_id=${_id}`, {
+          method: 'POST',
+          body: JSON.stringify(product),
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        })
+
+        const data = await res.json()
       }
 
-      const res = await fetch(`${baseUrl}/affiliates/add-product?affiliate_id=${_id}`, {
-        method: 'POST',
-        body: JSON.stringify(newProduct),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      })
-
-      const data = await res.json()
       resetForm()
       setLoading(false)
       toast({
@@ -202,13 +211,13 @@ function NewProductForm() {
   }
 
   async function handleWriteWithAi() {
-    if (!product?.name) {
+    if (!product?.name && !productData?.name) {
       alert('Please enter a product name')
       return
     }
 
     try {
-      const url = `${baseUrl}/write_about_meal?meal_name=${product?.name}`
+      const url = `${baseUrl}/write_about_meal?meal_name=${product?.name ? product?.name : productData?.name}`
       if (writing) {
         return
       }
@@ -235,11 +244,17 @@ function NewProductForm() {
     }
   }
 
+  console.log(productData)
+
   return (
     <div className=" pt-10 ">
       <form className=" mx-auto flex max-w-2xl flex-col gap-y-4 ">
         <div className="flex w-full items-center justify-center gap-x-2 md:justify-start">
-          <ImageInput setImageFile={setImageFile} imageFile={imageFile} setUploadable={setImage} />
+          <ImageInput
+            setImageFile={setImageFile}
+            imageFile={!imageFile ? productData?.image : imageFile}
+            setUploadable={setImage}
+          />
           <div className="hidden lg:block">
             <p className="text-white">All fields are required</p>
             <p className="text-sm text-white ">Please fill all required fields to contiune</p>
@@ -268,7 +283,7 @@ function NewProductForm() {
               Product Name
             </label>
             <input
-              value={product.name}
+              value={!product.name ? productData?.name : product.name}
               onChange={(e) =>
                 setProduct((prev) => ({
                   ...prev,
@@ -285,7 +300,7 @@ function NewProductForm() {
               Product price
             </label>
             <input
-              value={product.price}
+              value={!product.price ? productData?.price : product.price}
               onChange={(e) =>
                 setProduct((prev) => ({
                   ...prev,
@@ -328,7 +343,7 @@ function NewProductForm() {
                 description: e.target.value,
               }))
             }
-            placeholder={!writing ? 'Product description' : 'thinking..'}
+            placeholder={!product.description ? productData?.description : 'Product description'}
             rows={4}
             className=" w-full rounded-lg p-2"
           />
@@ -380,4 +395,4 @@ function NewProductForm() {
   )
 }
 
-export default NewProductForm
+export default EditProductForm

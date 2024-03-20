@@ -2,6 +2,8 @@ import { useQuery } from '@tanstack/react-query'
 import AffiliateProductsTable from '../components/AffiliateProductsTable'
 import NewProductForm from '../components/NewProductForm'
 import { Route, Routes } from 'react-router-dom'
+import EditProductTable from '../components/EditProductTable'
+import EditProductForm from '../components/EditProductForm'
 
 function AffiliateProductManager() {
   async function fetchStore() {
@@ -38,6 +40,8 @@ function AffiliateProductManager() {
       <Routes>
         <Route path="/" element={<AffiliateProductsTable title="" products={store?.store_products} />} />
         <Route path="/add" element={<NewProductForm />} />
+        <Route path="/edit" element={<EditProductTable title="" products={store?.store_products} />} />
+        <Route path="/edit/:id" element={<EditProductForm />} />
       </Routes>
     </div>
   )

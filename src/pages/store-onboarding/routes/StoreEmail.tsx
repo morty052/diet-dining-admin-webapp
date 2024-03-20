@@ -5,21 +5,21 @@ import { useNewAffiliate } from 'src/models/newAffiliate'
 import { useNavigate } from 'react-router-dom'
 import React from 'react'
 
-function StoreName() {
-  const [storeName, setStoreName] = React.useState('')
+function StoreEmail() {
+  const [email, setEmail] = React.useState('')
   const [error, setError] = React.useState(false)
   const navigate = useNavigate()
 
-  const { setName } = useNewAffiliate()
+  const { setAffiliateEmail } = useNewAffiliate()
 
-  function handleConfirmStoreName() {
-    if (!storeName) {
+  function handleConfirmemail() {
+    if (!email) {
       setError(true)
       return
     }
-    setName(storeName)
-    console.log(storeName)
-    navigate('/store-onboarding/description')
+    setAffiliateEmail(email)
+    console.log(email)
+    navigate('name')
   }
 
   return (
@@ -30,28 +30,28 @@ function StoreName() {
       className="grid gap-y-8 py-20 sm:px-4"
     >
       <div className="">
-        <p className="text-2xl font-semibold text-white">Vendor Display Name</p>
-        <p className="text-white">Please Enter a display name to show users. </p>
+        <p className="text-2xl font-semibold text-white">Vendor Email</p>
+        <p className="text-white">Please Enter a valid email for the vendor. </p>
       </div>
       <div className="">
         <input
-          placeholder="Enter Display Name"
-          value={storeName}
+          placeholder="Enter Vendor Email"
+          value={email}
           onChange={(e) => {
             if (error) {
               setError(false)
             }
-            setStoreName(e.target.value)
+            setEmail(e.target.value)
           }}
           type="text"
           className={` w-full border-b-2 bg-transparent p-2 text-lg text-white focus:border-green-400 focus:outline-none ${
             error && 'border-red-500'
           }`}
         />
-        {error && <p className="text-sm text-red-500">Please enter a valid name to continue</p>}
+        {error && <p className="text-sm text-red-500">Please enter a valid email to continue</p>}
       </div>
 
-      <Controlbuttons onClick={handleConfirmStoreName} />
+      <Controlbuttons onClick={handleConfirmemail} />
 
       {/* STEPS LEFT */}
       <div className=" max-w-7xl  pt-6">
@@ -66,4 +66,4 @@ function StoreName() {
   )
 }
 
-export default StoreName
+export default StoreEmail

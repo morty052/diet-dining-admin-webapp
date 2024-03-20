@@ -97,19 +97,11 @@ const affiliateLinks = [
   // },
 ]
 
-export function Header({
-  isAffiliate,
-  firstname,
-  minimal,
-  title,
-}: {
-  minimal?: boolean
-  title?: string
-  isAffiliate?: boolean
-  firstname: string
-}) {
+export function Header({ isAffiliate, minimal, title }: { minimal?: boolean; title?: string; isAffiliate?: boolean }) {
   const [open, setOpen] = React.useState(false)
   const navigate = useNavigate()
+  const firstname = localStorage.getItem('firstname')
+  const store_name = localStorage.getItem('store_name')
   return (
     <>
       <div className=" sticky top-0 z-50 max-w-7xl  bg-darkGrey  ">
@@ -158,15 +150,28 @@ export function Header({
           )}
 
           {/* HEADER RIGHT */}
-          <div className=" flex items-center gap-x-2">
-            <div className="flex flex-col">
-              <span className="text-xs text-white">Logged in as</span>
-              <span className="text-right text-xs text-white">{firstname}</span>
+          {!isAffiliate && (
+            <div className=" flex items-center gap-x-2">
+              <div className="flex flex-col">
+                <span className="text-xs text-white">Logged in as</span>
+                <span className="text-right text-xs text-white">{firstname}</span>
+              </div>
+              <div className="grid h-8 w-8 place-content-center rounded-full border border-white">
+                <p className="text-lg font-black uppercase text-green-400">{firstname?.charAt(0)}</p>
+              </div>
             </div>
-            <div className="grid h-8 w-8 place-content-center rounded-full border border-white">
-              <p className="text-lg font-black text-green-400">A</p>
+          )}
+          {isAffiliate && (
+            <div className=" flex items-center gap-x-2">
+              <div className="flex flex-col">
+                <span className="text-xs text-white">Logged in as</span>
+                <span className="text-right text-xs text-white">{store_name}</span>
+              </div>
+              <div className="grid h-8 w-8 place-content-center rounded-full border border-white">
+                <p className="text-lg font-black uppercase text-green-400">{store_name?.charAt(0)}</p>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
       {open && <Sidebar setOpen={setOpen} />}

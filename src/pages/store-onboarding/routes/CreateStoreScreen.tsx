@@ -16,7 +16,7 @@ import {
 } from 'src/components/ui/alert-dialog'
 import React from 'react'
 import { toast } from 'src/components/ui/use-toast'
-import { urlFor } from 'src/lib/sanityClient'
+import { baseUrl } from 'src/constants/baseUrl'
 
 const EmailConfirmationPopup = ({
   loading,
@@ -58,7 +58,7 @@ const EmailConfirmationPopup = ({
 }
 
 function CreateStoreScreen() {
-  const { createAffiliate, affiliate } = useNewAffiliate()
+  const { createStore, affiliate, createAffiliate } = useNewAffiliate()
   const [loading, setLoading] = React.useState(false)
   const [done, setDone] = React.useState(false)
 
@@ -66,27 +66,24 @@ function CreateStoreScreen() {
 
   const navigate = useNavigate()
 
-  async function handleCreateStore() {
-    // const _id = await createAffiliate()
-    const _id = '6'
-    navigate(`/store-preview/${_id}`)
-  }
-
-  async function handlePreviewStore() {
-    // const _id = await createAffiliate()
-    const _id = '6'
-    navigate(`/store-preview/${_id}`)
-  }
-
-  async function handleSendEmail({ username, affiliateImage }: { username: string; affiliateImage: string }) {
-    const imageUrl = urlFor(affiliateImage).url()
-    console.log(imageUrl)
-
-    setLoading(true)
-    const url = `http://localhost:3000/send-email?username=${username}&affiliateImage=${imageUrl}`
+  async function handleSendEmail({ username, code }: { username: string; code: string }) {
+    const url = `${baseUrl}/send-email?username=${username}&code=${code}`
     const res = await fetch(url)
     const data = await res.json()
     console.log(data)
+  }
+
+  async function handleCreateStore() {
+    setLoading(true)
+    // * CREATE AFFILIATE
+    const data = await createAffiliate()
+    // * GET CODE AS ID FROM CREATING AFFILIATE
+    const { _id, status } = data
+    console.log(data)
+    const { _id: store_id } = await createStore(_id as string)
+    // * SEND EMAIL TO NEW AFFILIATE WITH CODE
+    console.log(store_id)
+    await handleSendEmail({ username: affiliate.store_name, code: store_id as string })
     setLoading(false)
     setDone(true)
     toast({
@@ -94,6 +91,22 @@ function CreateStoreScreen() {
       description: 'An onboarding email has been sent to the new vendor',
       // action: <ToastAction altText="Goto schedule to undo">Undo</ToastAction>,
     })
+    // navigate(`/store-preview/${store_id}`)
+  }
+
+  async function handleFinish() {
+    if (!done) {
+      await handleCreateStore()
+      return
+    }
+
+    navigate(`/dashboard`)
+  }
+
+  async function handlePreviewStore() {
+    // const _id = await createAffiliate()
+    const _id = '6'
+    navigate(`/store-preview/${_id}`)
   }
 
   return (
@@ -105,7 +118,7 @@ function CreateStoreScreen() {
         {!done && (
           <>
             <EmailConfirmationPopup
-              handleSendEmail={() => handleSendEmail({ username: affiliate.store_name, affiliateImage: store_image })}
+              handleSendEmail={() => handleCreateStore()}
               loading={loading}
               setLoading={setLoading}
             />
@@ -137,7 +150,7 @@ function CreateStoreScreen() {
         <p className="cursor-pointer  text-lg font-medium text-white hover:text-green-400">Preview on companion app</p>
         <ArrowRightCircle className="mt-1 h-5 w-5 text-white transition-all duration-300 ease-in group-hover:translate-x-2 group-hover:text-green-400" />
       </div>
-      <Controlbuttons title="Finish" onClick={() => handleCreateStore()} />
+      <Controlbuttons title="Finish" onClick={() => handleFinish()} />
       <div className=" max-w-7xl pt-12 ">
         <div className="flex items-center gap-x-2">
           <p className="fontmedium text-sm text-white">

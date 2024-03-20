@@ -410,7 +410,7 @@ export function AffiliateDashboard() {
   return (
     <div className=" mx-auto min-h-screen max-w-7xl  bg-darkGrey">
       {/* HEADER */}
-      <Header firstname="Abdul" isAffiliate />
+      <Header isAffiliate />
       {/* Container */}
       <Routes>
         <Route path="/" element={<Dashboard />} />

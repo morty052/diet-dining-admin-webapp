@@ -10,6 +10,7 @@ import StoreLogo from './routes/StoreLogo'
 import StoreTags from './routes/StoreTags'
 import CreateStoreScreen from './routes/CreateStoreScreen'
 import StoreHeader from './routes/StoreHeader'
+import StoreEmail from './routes/StoreEmail'
 
 function Preview() {
   const { affiliate, previewHeader, previewLogo } = useNewAffiliate()
@@ -85,12 +86,13 @@ function Preview() {
 export function StoreOnboarding() {
   return (
     <div className="min-h-screen bg-black">
-      <Header firstname="Abdul" minimal title="Vendor Onboarding" />
+      <Header minimal title="Vendor Onboarding" />
 
       <div className="mx-auto grid max-w-6xl  divide-x divide-gray-200/20 pt-10 md:grid-cols-2">
         <div className="max-w-screen-sm px-4 2xl:max-w-screen-md">
           <Routes>
-            <Route path="/" element={<StoreName />} />
+            <Route path="/" element={<StoreEmail />} />
+            <Route path="/name" element={<StoreName />} />
             <Route path="/description" element={<StoreDescription />} />
             <Route path="/image" element={<StoreHeader />} />
             <Route path="/logo" element={<StoreLogo />} />

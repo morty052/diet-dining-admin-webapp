@@ -1,3 +1,4 @@
+import { baseUrl } from 'src/constants/baseUrl'
 import { create } from 'zustand'
 
 interface affiliateObject {
@@ -23,6 +24,11 @@ interface IAffiliate {
   affiliate: {
     _type: 'stores'
     store_name: string
+    email: string
+    owner: {
+      _ref: string
+      _type: 'reference'
+    }
     store_description: string
     store_address: {
       street: string
@@ -52,20 +58,33 @@ interface IAffiliate {
   previewHeader: string
   previewLogo: string
   setName: (name: string) => void
+  setAffiliateEmail: (name: string) => void
   setDescription: (name: string) => void
   setHeader: (image: string, previewHeader: string) => void
   setLogo: (image: string, previewLogo: string) => void
   setAddress: (address: { street: string; city: string; province: string; postal_code: string }) => void
   addTag: (tag: string) => void
   removeTag: (tag: string) => void
-  createAffiliate: () => Promise<string>
+  createAffiliate: () => Promise<{
+    status: 'CONFIRMED' | 'REJECTED'
+    _id: string | null
+  }>
+  createStore: (owner_id: string) => Promise<{
+    status: 'CONFIRMED' | 'REJECTED'
+    _id: string | null
+  }>
 }
 
 export const useNewAffiliate = create<IAffiliate>((set, state) => ({
   affiliate: {
     _type: 'stores',
     store_name: '',
+    owner: {
+      _ref: '',
+      _type: 'reference',
+    },
     store_description: '',
+    email: '',
     store_address: {
       street: '',
       city: '',
@@ -93,6 +112,15 @@ export const useNewAffiliate = create<IAffiliate>((set, state) => ({
   },
   previewHeader: '',
   previewLogo: '',
+  setAffiliateEmail: (email) => {
+    console.log(email)
+    set((state) => ({
+      affiliate: {
+        ...state.affiliate,
+        email: email,
+      },
+    }))
+  },
   setName: (name) => {
     console.log(name)
     set((state) => ({
@@ -172,6 +200,14 @@ export const useNewAffiliate = create<IAffiliate>((set, state) => ({
   },
   createAffiliate: async () => {
     const affiliate = state().affiliate
+    const { email } = affiliate
+    const res = await fetch(`${baseUrl}/affiliates/create-affiliate?email=${email}`)
+    const data = await res.json()
+    console.log(data)
+    return data
+  },
+  createStore: async (owner_id) => {
+    const affiliate = state().affiliate
 
     const { store_name, store_image, store_logo, _type, store_address, store_description, store_approval } = affiliate
 
@@ -183,9 +219,13 @@ export const useNewAffiliate = create<IAffiliate>((set, state) => ({
       store_approval,
       store_image,
       store_logo,
+      owner: {
+        _ref: owner_id,
+        _type: 'reference',
+      },
     }
 
-    const res = await fetch(`http://localhost:3000/stores/create`, {
+    const res = await fetch(`${baseUrl}/stores/create`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -194,6 +234,6 @@ export const useNewAffiliate = create<IAffiliate>((set, state) => ({
     })
     const data = await res.json()
     console.log(data)
-    return data._id
+    return data
   },
 }))
