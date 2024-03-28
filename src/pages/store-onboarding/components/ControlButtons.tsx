@@ -1,8 +1,8 @@
 import { ArrowLeft } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
-import { Button } from 'src/components/ui/button'
+import { Button } from '../../../components/ui/button'
 
-function Controlbuttons({ onClick, title }: { onClick: () => void; title?: string }) {
+function Controlbuttons({ onClick, title, finished }: { onClick: () => void; title?: string; finished?: boolean }) {
   const navigate = useNavigate()
 
   return (
@@ -10,15 +10,17 @@ function Controlbuttons({ onClick, title }: { onClick: () => void; title?: strin
       <Button onClick={() => navigate(-1)} className="bg-white text-black">
         <ArrowLeft />
       </Button>
-      <Button
-        onClick={() => {
-          onClick()
-          // setImageFile('')
-        }}
-        className="w-48 bg-white text-black"
-      >
-        {title ? title : 'Next'}
-      </Button>
+      {!finished && (
+        <Button
+          onClick={() => {
+            onClick()
+            // setImageFile('')
+          }}
+          className="w-48 bg-white text-black"
+        >
+          {title ? title : 'Next'}
+        </Button>
+      )}
     </div>
   )
 }

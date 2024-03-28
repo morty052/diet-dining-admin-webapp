@@ -1,10 +1,15 @@
 import { useQuery } from '@tanstack/react-query'
 import { Plus, Star } from 'lucide-react'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from 'src/components/ui/tabs'
+import React from 'react'
+
+import { StorePhoneMockUp } from '../../components/phone-mockup'
+import { Button } from '../../components/ui/button'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/tabs'
+import { baseUrl } from '../../constants/baseUrl'
 
 const fetchStores = async () => {
   // const res = await fetch(`http://192.168.100.16:3000/stores/get-all`)
-  const res = await fetch(`http://localhost:3000/stores/get-all`)
+  const res = await fetch(`${baseUrl}/stores/get-all`)
   const data = await res.json()
   console.log(data)
   return data
@@ -123,8 +128,8 @@ function StoreManagerTab() {
     }
 
     return (
-      <div className="inline-flex   justify-center rounded-lg bg-green-300 px-4 py-1">
-        {!isAddNewTagButton && <p className="text0white text-xs font-medium">{name}</p>}
+      <div className="inline-flex   justify-center rounded-lg   py-1">
+        {<p className="text-xs font-medium text-white">{name}</p>}
       </div>
     )
   }
@@ -147,20 +152,28 @@ function StoreManagerTab() {
   async function fetchStore() {
     const _id = localStorage.getItem('_id')
     console.log(_id)
-    const res = await fetch(`http://localhost:3000/affiliates/get-affiliate-stores?afilliate_id=${_id}`)
+    const res = await fetch(`${baseUrl}/affiliates/get-affiliate-stores?afilliate_id=${_id}`)
     const data = await res.json()
     console.log(data)
     return data[0]
   }
 
-  const { isLoading, data: store } = useQuery({ queryKey: [''], queryFn: fetchStore })
+  const { isLoading, data: store } = useQuery({ queryKey: ['affiliate_store'], queryFn: fetchStore })
 
   if (isLoading) {
     return null
   }
 
-  const { store_name, store_image, store_logo, store_address, menu, store_description, store_ratings_count } =
-    store ?? {}
+  const {
+    store_name,
+    store_image,
+    store_logo,
+    store_address,
+    menu,
+    store_description,
+    store_ratings_count,
+    store_tags,
+  } = store ?? {}
 
   return (
     <div className="grid grid-cols-2 ">
@@ -170,25 +183,24 @@ function StoreManagerTab() {
           {/* BACKGROUND IMAGE */}
           <div className="relative h-[200px]">
             <img className="h-full  w-full object-cover" src={store_image} alt="" />
-            <div className="absolute bottom-0 ">
+            {/* <div className="absolute bottom-0 ">
               <img className=" h-20 w-20 rounded-full object-cover" src={store_logo} alt="" />
-            </div>
+            </div> */}
           </div>
           {/* STORE DETAILS */}
           <div className="p-2">
             <p className="text-white">{store_name}</p>
-            <p className="text-white">{store_address?.street}</p>
-            <StoreRatingGrid store_ratings_count={store_ratings_count} />
+            {/* <p className="text-white">{store_address?.street}</p> */}
+            <div className="flex items-center gap-x-1 py-2">
+              <Star className="h-4 w-4 fill-yellow-400 text-yellow-400 " />
+              <p className="text-xs font-medium text-white">4.7 (100 ratings)</p>
+            </div>
             {/* TAGS */}
             <div className="flex flex-row flex-wrap items-center gap-4 py-2">
-              <StoreTag name="Salads" />
-              <StoreTag name="Parfaits" />
-              <StoreTag name="Drinks" />
-              <StoreTag name="Lean Meats" />
-              <StoreTag name="Korean" />
-              <StoreTag name="Halal" />
-              <StoreTag name="Sea Food" />
-              <StoreTag isAddNewTagButton name="Keto" />
+              {store_tags?.map((tag: string, index: number) => (
+                <StoreTag key={index} name={tag} />
+              ))}
+              {/* <StoreTag isAddNewTagButton name="Keto" /> */}
             </div>
             <div className="mt-2 h-40 rounded-lg border p-2">
               <p className="text-sm text-white">{store_description}</p>
@@ -198,22 +210,106 @@ function StoreManagerTab() {
       </div>
       {/* RIGHT SIDE */}
       <div className=" hidden space-y-4 overflow-y-scroll border-l px-4 lg:block">
-        <ProductsTab menu={menu} />
-        {/* <Tabs defaultValue="products" className="">
-          <TabsList>
-            <TabsTrigger value="products">Products</TabsTrigger>
-            <TabsTrigger value="hours">Hours</TabsTrigger>
-            <TabsTrigger value="promos">Promos</TabsTrigger>
-          </TabsList>
-          <TabsContent value="products">
-          </TabsContent>
-          <TabsContent value="hours">
-            <Hours />
-          </TabsContent>
-          <TabsContent value="promos">
-            <Hours />
-          </TabsContent>
-        </Tabs> */}
+        <StorePhoneMockUp store_name={store_name} store_image={store_image} tags={store_tags} />
+      </div>
+    </div>
+  )
+}
+
+// TODO:CREATE ROUTE TO POST CHANGES
+function EditStoreTab() {
+  const [storeDescription, setStoreDescription] = React.useState('')
+  function StoreTag({ name, isAddNewTagButton }: { name: string; isAddNewTagButton?: boolean }) {
+    if (isAddNewTagButton) {
+      return (
+        <div className="group  inline-flex  cursor-pointer  rounded-lg bg-white px-2  py-1 hover:bg-green-400">
+          <div className="flex w-full flex-row items-center  gap-x-1 ">
+            <Plus size={10} color="blue" />
+            <p className="text0white flex-1 text-xs font-medium group-hover:text-white">Add new tag</p>
+          </div>
+        </div>
+      )
+    }
+
+    return (
+      <div className="inline-flex   justify-center rounded-lg   py-1">
+        {<p className="text-xs font-medium text-white">{name}</p>}
+      </div>
+    )
+  }
+
+  async function fetchStore() {
+    const _id = localStorage.getItem('_id')
+    console.log(_id)
+    const res = await fetch(`${baseUrl}/affiliates/get-affiliate-stores?afilliate_id=${_id}`)
+    const data = await res.json()
+    console.log(data)
+    return data[0]
+  }
+
+  const { isLoading, data: store } = useQuery({ queryKey: ['affiliate_store'], queryFn: fetchStore })
+
+  if (isLoading) {
+    return null
+  }
+
+  const {
+    store_name,
+    store_image,
+    store_logo,
+    store_address,
+    menu,
+    store_description,
+    store_ratings_count,
+    store_tags,
+  } = store ?? {}
+
+  return (
+    <div className="grid grid-cols-2 ">
+      {/* LEFT SIDE */}
+      <div className="col-span-2 lg:col-span-1">
+        <div className="sticky top-0">
+          {/* BACKGROUND IMAGE */}
+          <div className="relative h-[200px]">
+            <img className="h-full  w-full object-cover" src={store_image} alt="" />
+            {/* <div className="absolute bottom-0 ">
+              <img className=" h-20 w-20 rounded-full object-cover" src={store_logo} alt="" />
+            </div> */}
+          </div>
+          {/* STORE DETAILS */}
+          <div className="p-2">
+            <p className="text-white">{store_name}</p>
+            {/* <p className="text-white">{store_address?.street}</p> */}
+            <div className="flex items-center gap-x-1 py-2">
+              <Star className="h-4 w-4 fill-yellow-400 text-yellow-400 " />
+              <p className="text-xs font-medium text-white">4.7 (100 ratings)</p>
+            </div>
+            {/* TAGS */}
+            <div className="flex flex-row flex-wrap items-center gap-4 py-2">
+              {store_tags?.map((tag: string, index: number) => (
+                <StoreTag key={index} name={tag} />
+              ))}
+              <StoreTag isAddNewTagButton name="Keto" />
+            </div>
+            <textarea
+              name="store_description"
+              value={storeDescription}
+              onChange={(e) => setStoreDescription(e.target.value)}
+              placeholder={store_description}
+              className="mt-2 h-40 w-full rounded-lg border bg-transparent p-2 text-white focus:outline-green-400"
+            ></textarea>
+          </div>
+
+          <div className="p-2">
+            <Button>
+              <p>Save changes</p>
+            </Button>
+          </div>
+        </div>
+      </div>
+      {/* RIGHT SIDE */}
+      <div className=" hidden space-y-4 overflow-y-scroll border-l px-4 lg:block">
+        <StorePhoneMockUp store_name={store_name} store_image={store_image} tags={store_tags} />
       </div>
     </div>
   )
@@ -228,22 +324,23 @@ export function StoreManager() {
           <TabsTrigger className="w-[100px]" value="overview">
             Preview
           </TabsTrigger>
-          <TabsTrigger className="w-[100px]" value="store">
+          <TabsTrigger className="w-[100px]" value="edit">
             Edit
           </TabsTrigger>
-          <TabsTrigger className="hidden w-[100px] xl:block" value="store">
+          {/* <TabsTrigger className="hidden w-[100px] xl:block" value="store">
             Menu
-          </TabsTrigger>
-          <TabsTrigger className="w-[100px]" value="store">
+          </TabsTrigger> */}
+          {/* <TabsTrigger className="w-[100px]" value="store">
             Hours
-          </TabsTrigger>
+          </TabsTrigger> */}
         </TabsList>
         <TabsContent value="overview">
           <StoreManagerTab />
         </TabsContent>
-        <TabsContent value="store">{/* <StoreManagerTab /> */}</TabsContent>
+        <TabsContent value="edit">
+          <EditStoreTab />
+        </TabsContent>
       </Tabs>
-      <div className=" pt-6"></div>
     </div>
   )
 }

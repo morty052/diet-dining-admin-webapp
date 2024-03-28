@@ -1,10 +1,10 @@
 import { motion } from 'framer-motion'
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useNewAffiliate } from 'src/models/newAffiliate'
+import { useNewAffiliate } from '../../../models/newAffiliate'
 import ProgressBar from '../components/ProgressBar'
 import Controlbuttons from '../components/ControlButtons'
-import { autoComplete } from 'src/lib/autoComplete'
+import { autoComplete } from '../../../lib/autoComplete'
 
 type suggestions = {
   address: string

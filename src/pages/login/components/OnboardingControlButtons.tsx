@@ -1,6 +1,6 @@
 import { ArrowLeft } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
-import { Button } from 'src/components/ui/button'
+import { Button } from '../../../components/ui/button'
 
 function OnboardingControlbuttons({ onClick, title }: { onClick: () => void; title?: string }) {
   const navigate = useNavigate()

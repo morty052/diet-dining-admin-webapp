@@ -8,7 +8,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu'
-import { useNewAffiliate } from 'src/models/newAffiliate'
+import { useNewAffiliate } from '../../models/newAffiliate'
 
 const tags = ['Salads', 'Chinese', 'Soups', 'Desserts', 'Indian', 'Thai', 'Keto']
 

@@ -1,9 +1,9 @@
 import { motion } from 'framer-motion'
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
-import { StoreTagsDropdown } from 'src/components/dropdowns/StoreTagsDropDown'
-import { Button } from 'src/components/ui/button'
-import { useNewAffiliate } from 'src/models/newAffiliate'
+import { StoreTagsDropdown } from '../../../components/dropdowns/StoreTagsDropDown'
+import { Button } from '../../../components/ui/button'
+import { useNewAffiliate } from '../../../models/newAffiliate'
 import Controlbuttons from '../components/ControlButtons'
 import ProgressBar from '../components/ProgressBar'
 

@@ -1,7 +1,7 @@
 import { UploadBody } from '@sanity/client'
 import { ArrowLeft } from 'lucide-react'
 import React from 'react'
-import { Button } from 'src/components/ui/button'
+import { Button } from '../../../components/ui/button'
 
 function ImageInput({
   onClick,

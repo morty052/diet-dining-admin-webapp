@@ -8,18 +8,19 @@ import {
   TableHeader,
   TableRow,
 } from '../../../components/ui/table'
-import { Button } from 'src/components/ui/button'
+import { Button } from '../../../components/ui/button'
 import { ChevronDown } from 'lucide-react'
-import { Torder } from 'src/types/order'
+import { Torder } from '../../../types/order'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from 'src/components/ui/dropdown-menu'
-import CartModal from 'src/components/modals/CartModal'
-import { Tcart, TcartItem } from 'src/types/cart'
+} from '../../../components/ui/dropdown-menu'
+import CartModal from '../../../components/modals/CartModal'
+import { Tcart, TcartItem } from '../../../types/cart'
+import { baseUrl } from '../../../constants/baseUrl'
 
 type Props = {
   title: string
@@ -128,7 +129,7 @@ function OrderUpdateDropdown({ pending, _id }: { pending: boolean; _id: string }
         break
     }
 
-    const res = await fetch('http://localhost:3000/orders/update-status', {
+    const res = await fetch(`${baseUrl}/orders/update-status`, {
       method: 'POST',
       body: JSON.stringify({ status, _id }),
       headers: {

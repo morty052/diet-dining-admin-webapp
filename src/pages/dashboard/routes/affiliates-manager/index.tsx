@@ -1,10 +1,11 @@
 import { useQuery } from '@tanstack/react-query'
 import { Plus, Star } from 'lucide-react'
 import AffiliatesTable from '../../components/AffiliatesTable'
+import { baseUrl } from '../../../../constants/baseUrl'
 
 const fetchStores = async () => {
   // const res = await fetch(`http://192.168.100.16:3000/stores/get-all`)
-  const res = await fetch(`http://localhost:3000/admin/get-all-affiliates`)
+  const res = await fetch(`${baseUrl}/admin/get-all-affiliates`)
   const data = await res.json()
   const { data: affiliates, status } = data
   if (status == 'SUCCESS') {
@@ -78,7 +79,7 @@ function StoreManagerTab() {
   async function fetchStore() {
     const _id = localStorage.getItem('_id')
     console.log(_id)
-    const res = await fetch(`http://localhost:3000/affiliates/get-affiliate-stores?afilliate_id=${_id}`)
+    const res = await fetch(`${baseUrl}/affiliates/get-affiliate-stores?afilliate_id=${_id}`)
     const data = await res.json()
     console.log(data)
     return data[0]

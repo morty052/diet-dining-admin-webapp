@@ -1,5 +1,5 @@
 import React from 'react'
-import SocketContextComponent from 'src/contexts/SocketContextComponent'
+import SocketContextComponent from '../contexts/SocketContextComponent'
 
 export default function Test() {
   // const socket = useSocket('ws://localhost:4000/admin', {

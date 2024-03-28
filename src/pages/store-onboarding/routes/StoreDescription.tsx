@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion'
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useNewAffiliate } from 'src/models/newAffiliate'
+import { useNewAffiliate } from '../../../models/newAffiliate'
 import Controlbuttons from '../components/ControlButtons'
 import ProgressBar from '../components/ProgressBar'
 

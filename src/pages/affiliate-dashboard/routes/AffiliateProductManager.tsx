@@ -4,17 +4,18 @@ import NewProductForm from '../components/NewProductForm'
 import { Route, Routes } from 'react-router-dom'
 import EditProductTable from '../components/EditProductTable'
 import EditProductForm from '../components/EditProductForm'
+import { baseUrl } from '../../../constants/baseUrl'
 
 function AffiliateProductManager() {
   async function fetchStore() {
     const _id = localStorage.getItem('_id')
     console.log(_id)
-    const res = await fetch(`http://localhost:3000/affiliates/get-affiliate-stores?afilliate_id=${_id}`)
+    const res = await fetch(`${baseUrl}/affiliates/get-affiliate-stores?afilliate_id=${_id}`)
     const data = await res.json()
     console.log(data)
     return data[0]
   }
-  const { isLoading, data: store } = useQuery({ queryKey: [''], queryFn: fetchStore })
+  const { isLoading, data: store } = useQuery({ queryKey: ['affiliate_products'], queryFn: fetchStore })
 
   // if (isLoading) {
   //   return null

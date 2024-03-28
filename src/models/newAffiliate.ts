@@ -1,4 +1,4 @@
-import { baseUrl } from 'src/constants/baseUrl'
+import { baseUrl } from '../constants/baseUrl'
 import { create } from 'zustand'
 
 interface affiliateObject {
@@ -209,7 +209,8 @@ export const useNewAffiliate = create<IAffiliate>((set, state) => ({
   createStore: async (owner_id) => {
     const affiliate = state().affiliate
 
-    const { store_name, store_image, store_logo, _type, store_address, store_description, store_approval } = affiliate
+    const { store_name, store_image, store_logo, _type, store_address, store_description, store_approval, tags } =
+      affiliate
 
     const newStore = {
       _type,
@@ -219,6 +220,7 @@ export const useNewAffiliate = create<IAffiliate>((set, state) => ({
       store_approval,
       store_image,
       store_logo,
+      store_tags: tags,
       owner: {
         _ref: owner_id,
         _type: 'reference',

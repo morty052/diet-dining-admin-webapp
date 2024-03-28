@@ -1,5 +1,3 @@
-'use client'
-
 import * as React from 'react'
 
 import { cn } from '../../lib/utils'
@@ -7,6 +5,7 @@ import { Button } from '../ui/button'
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from '../ui/command'
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover'
 import { Check, CheckIcon, ChevronsUpDown, Plus } from 'lucide-react'
+import { baseUrl } from '../../constants/baseUrl'
 
 const categories = [
   {
@@ -65,7 +64,7 @@ export function Combobox({
     const affiliate_id = localStorage.getItem('_id')
     setLoading(true)
     const res = await fetch(
-      `http://localhost:3000/stores/create-category?category=${newCategoryValue}&affiliate_id=${affiliate_id}`,
+      `${baseUrl}/stores/create-category?category=${newCategoryValue}&affiliate_id=${affiliate_id}`,
     )
     const data = await res.json()
     console.log(data)

@@ -1,13 +1,14 @@
 import React from 'react'
 import AllOrdersTable from '../components/AllOrdersTable'
 import { useQuery } from '@tanstack/react-query'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from 'src/components/ui/tabs'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../../components/ui/tabs'
 import { Route, Routes } from 'react-router-dom'
+import { baseUrl } from '../../../constants/baseUrl'
 
 async function fetchOrders() {
   console.log('fetching')
   const _id = localStorage.getItem('_id')
-  const res = await fetch(`https://diet-dining-server.onrender.com/admin/get-all-orders`)
+  const res = await fetch(`${baseUrl}/admin/get-all-orders`)
   const data = await res.json()
   console.log(data)
   return data.data

@@ -1,11 +1,12 @@
 import React from 'react'
 import { Route, Routes } from 'react-router-dom'
-import { Button } from 'src/components/ui/button'
-import { BarChart, Header } from 'src/components'
+import { Button } from '../../components/ui/button'
+import { BarChart, Header } from '../../components'
 import Notifications from './routes/Notifications'
 import { useQuery } from '@tanstack/react-query'
 import { AffiliatesManager } from './routes/affiliates-manager'
 import OrdersManager from './routes/OrdersManager'
+import { baseUrl } from '../../constants/baseUrl'
 
 type DailyStars = {
   date: Date
@@ -48,6 +49,18 @@ const data: Series[] = [
   },
 ]
 
+type OrderProps = {
+  _id: string
+  total: number
+  date: string
+  products: { name: string; price: number; quantity: number; image: string }[]
+  user: {
+    email: string
+    firstname: string
+    lastname: string
+  }
+}
+
 function DashboardInfoCard({ title, figure }: { title: string; figure: string | number }) {
   return (
     <div className="w-full rounded-sm  border px-4 py-2 lg:w-1/4">
@@ -65,7 +78,7 @@ function DashboardInfoCard({ title, figure }: { title: string; figure: string | 
   )
 }
 
-function OverView({ sales, total_revenue }: { sales: number; total_revenue: number }) {
+function OverView({ sales, total_revenue, orders }: { sales: number; total_revenue: number | string; orders: any }) {
   return (
     <div className="">
       <div className="grid  gap-4 pb-4 md:pb-0  ">
@@ -96,7 +109,7 @@ function OverView({ sales, total_revenue }: { sales: number; total_revenue: numb
           <DashboardInfoCard figure="3" title="Active Promos" />
         </div>
         <div className="flex w-full flex-col gap-y-8 lg:flex-row-reverse lg:gap-x-8 ">
-          <RecentSalesCard />
+          <RecentSalesCard orders={orders} />
           <BarChart />
         </div>
       </div>
@@ -104,34 +117,34 @@ function OverView({ sales, total_revenue }: { sales: number; total_revenue: numb
   )
 }
 
-function RecentSalesCard() {
-  const sales = [
-    {
-      customer_name: 'Olivier Martin',
-      customer_email: 'Olivier@gmail.com',
-      price: 330,
-    },
-    {
-      customer_name: 'Andrew Killcoff',
-      customer_email: 'Andrew@gmail.com',
-      price: 1430,
-    },
-    {
-      customer_name: 'Keegan Matthew',
-      customer_email: 'keegan@gmail.com',
-      price: 240,
-    },
-    {
-      customer_name: 'Welma Flintstone',
-      customer_email: 'Welma@gmail.com',
-      price: 320,
-    },
-    {
-      customer_name: 'Patrick Star',
-      customer_email: 'patrick@gmail.com',
-      price: 200,
-    },
-  ]
+function RecentSalesCard({ orders }: { orders: any }) {
+  // const sales = [
+  //   {
+  //     customer_name: 'Olivier Martin',
+  //     customer_email: 'Olivier@gmail.com',
+  //     price: 330,
+  //   },
+  //   {
+  //     customer_name: 'Andrew Killcoff',
+  //     customer_email: 'Andrew@gmail.com',
+  //     price: 1430,
+  //   },
+  //   {
+  //     customer_name: 'Keegan Matthew',
+  //     customer_email: 'keegan@gmail.com',
+  //     price: 240,
+  //   },
+  //   {
+  //     customer_name: 'Welma Flintstone',
+  //     customer_email: 'Welma@gmail.com',
+  //     price: 320,
+  //   },
+  //   {
+  //     customer_name: 'Patrick Star',
+  //     customer_email: 'patrick@gmail.com',
+  //     price: 200,
+  //   },
+  // ]
 
   const SaleItem = ({
     customer_name,
@@ -157,19 +170,21 @@ function RecentSalesCard() {
   }
 
   return (
-    <div className="space-y-4 rounded-lg border border-white/50 p-4 lg:w-2/5">
+    <div className=" space-y-4 overflow-y-scroll rounded-lg border border-white/50 p-4 lg:w-2/5">
       <div className="">
         <p className="text-lg font-semibold text-white">Recent Sales</p>
         <p className="text-sm font-semibold text-gray-300">You made 256 sales this month.</p>
       </div>
-      {sales.map((sale, index) => (
-        <SaleItem
-          key={index}
-          customer_email={sale.customer_email}
-          customer_name={sale.customer_name}
-          price={sale.price}
-        />
-      ))}
+      <div className="max-h-[400px] space-y-4 overflow-y-scroll ">
+        {orders?.map((order: OrderProps, index: number) => (
+          <SaleItem
+            key={index}
+            customer_email={order.user.email}
+            customer_name={order.user.firstname}
+            price={order.total}
+          />
+        ))}
+      </div>
     </div>
   )
 }
@@ -196,22 +211,26 @@ function DownLoadReportButton() {
 }
 
 function AdminDashboard() {
-  async function fetchAffiliate() {
-    const _id = localStorage.getItem('_id')
-    const res = await fetch(`http://localhost:3000/affiliates/get-affiliate?afilliate_id=${_id}`)
+  // async function fetchAffiliate() {
+  //   const _id = localStorage.getItem('_id')
+  //   const res = await fetch(`http://localhost:3000/affiliates/get-affiliate?afilliate_id=${_id}`)
+  //   const data = await res.json()
+  //   console.log(data)
+  //   return data
+  // }
+
+  async function fetchAllOrders() {
+    console.log('fetching')
+    const res = await fetch(`${baseUrl}/admin/get-all-orders`)
     const data = await res.json()
     console.log(data)
-    return data
+    return data.data
   }
-  const { isLoading, data: affiliate } = useQuery({ queryKey: [''], queryFn: fetchAffiliate })
+  const { isLoading, data: orders } = useQuery({ queryKey: ['all_orders'], queryFn: fetchAllOrders })
 
   // if (isLoading) {
   //   return null
   // }
-
-  const { sales, total_revenue } = affiliate ?? {}
-
-  console.log(affiliate)
 
   return (
     <div className="relative px-4 pt-6">
@@ -219,7 +238,7 @@ function AdminDashboard() {
         <p className="hidden text-2xl font-semibold text-white md:block">Dashboard</p>
         <DownLoadReportButton />
       </div>
-      <OverView total_revenue={total_revenue} sales={sales} />
+      <OverView orders={orders?.slice(0, 6)} total_revenue={`$${7000}`} sales={540} />
     </div>
   )
 }
@@ -228,7 +247,7 @@ export function Dashboard() {
   return (
     <div className=" mx-auto min-h-screen max-w-7xl bg-darkGrey ">
       {/* HEADER */}
-      <Header firstname="Anthony" />
+      <Header />
       {/* ROUTES */}
       <Routes>
         <Route path="/" element={<AdminDashboard />} />

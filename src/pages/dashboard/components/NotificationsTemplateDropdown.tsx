@@ -26,6 +26,10 @@ const templates = [
     subject: 'Join Diet Plus',
     body: 'check out these exclusive benefits when you join diet plus',
   },
+  {
+    subject: 'Testing broadcast',
+    body: 'please ignore, testing broadcast',
+  },
 ]
 
 export function NotificationsTemplateDropDown({

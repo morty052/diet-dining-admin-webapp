@@ -1,11 +1,11 @@
 import { UploadBody } from '@sanity/client'
 import { Pen } from 'lucide-react'
 import React from 'react'
-import { Combobox } from 'src/components'
-import { Button } from 'src/components/ui/button'
-import { baseUrl } from 'src/constants/baseUrl'
-import { sanityClient } from 'src/lib/sanityClient'
-import { toast } from 'src/components/ui/use-toast'
+import { Combobox } from '../../../components'
+import { Button } from '../../../components/ui/button'
+import { baseUrl } from '../../../constants/baseUrl'
+import { sanityClient } from '../../../lib/sanityClient'
+import { toast } from '../../../components/ui/use-toast'
 
 type TnewProduct = {
   _type: 'products'
@@ -151,12 +151,13 @@ function NewProductForm() {
     if (loading) {
       return
     }
-    setLoading(true)
+
     try {
       if (!image || !product.description || !product.name || !product.price) {
         alert('Please fill in all fields')
         return
       }
+      setLoading(true)
       const _id = localStorage.getItem('_id')
       console.log({
         ...product,
@@ -192,7 +193,7 @@ function NewProductForm() {
       setLoading(false)
       toast({
         title: 'Added to database.',
-        description: 'An onboarding email has been sent to the new vendor',
+        description: 'New product has been added to the database pending approval.',
         // action: <ToastAction altText="Goto schedule to undo">Undo</ToastAction>,
       })
     } catch (error) {

@@ -1,6 +1,6 @@
 import { ArrowRightCircle } from 'lucide-react'
-import { useNavigate } from 'react-router-dom'
-import { useNewAffiliate } from 'src/models/newAffiliate'
+import { useNavigate, useSearchParams } from 'react-router-dom'
+import { useNewAffiliate } from '../../../models/newAffiliate'
 import Controlbuttons from '../components/ControlButtons'
 import ProgressBar from '../components/ProgressBar'
 import {
@@ -13,24 +13,26 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from 'src/components/ui/alert-dialog'
+} from '../../../components/ui/alert-dialog'
 import React from 'react'
-import { toast } from 'src/components/ui/use-toast'
-import { baseUrl } from 'src/constants/baseUrl'
+import { toast } from '../../../components/ui/use-toast'
+import { baseUrl } from '../../../constants/baseUrl'
 
 const EmailConfirmationPopup = ({
   loading,
   setLoading,
   handleSendEmail,
+  trigger,
 }: {
   loading: boolean
   setLoading: React.Dispatch<React.SetStateAction<boolean>>
   handleSendEmail: () => void
+  trigger: React.RefObject<HTMLButtonElement>
 }) => {
   return (
     <AlertDialog>
       {!loading && (
-        <AlertDialogTrigger>
+        <AlertDialogTrigger ref={trigger}>
           <p className="cursor-pointer text-center text-xl  font-semibold text-gray-100 transition-all duration-300 ease-in hover:text-green-400">
             Add to database
           </p>
@@ -62,12 +64,15 @@ function CreateStoreScreen() {
   const [loading, setLoading] = React.useState(false)
   const [done, setDone] = React.useState(false)
 
-  const { store_image } = affiliate
+  const [params, setParams] = useSearchParams()
+
+  const { store_image, email } = affiliate
 
   const navigate = useNavigate()
+  const popUpButtonRef = React.useRef<HTMLButtonElement>(null)
 
   async function handleSendEmail({ username, code }: { username: string; code: string }) {
-    const url = `${baseUrl}/send-email?username=${username}&code=${code}`
+    const url = `${baseUrl}/send-email?username=${username}&code=${code}&to=${email}`
     const res = await fetch(url)
     const data = await res.json()
     console.log(data)
@@ -79,11 +84,10 @@ function CreateStoreScreen() {
     const data = await createAffiliate()
     // * GET CODE AS ID FROM CREATING AFFILIATE
     const { _id, status } = data
-    console.log(data)
     const { _id: store_id } = await createStore(_id as string)
     // * SEND EMAIL TO NEW AFFILIATE WITH CODE
-    console.log(store_id)
     await handleSendEmail({ username: affiliate.store_name, code: store_id as string })
+    setParams({ store_id: store_id as string })
     setLoading(false)
     setDone(true)
     toast({
@@ -91,22 +95,17 @@ function CreateStoreScreen() {
       description: 'An onboarding email has been sent to the new vendor',
       // action: <ToastAction altText="Goto schedule to undo">Undo</ToastAction>,
     })
+
+    return store_id
     // navigate(`/store-preview/${store_id}`)
   }
 
   async function handleFinish() {
-    if (!done) {
-      await handleCreateStore()
-      return
-    }
-
-    navigate(`/dashboard`)
+    popUpButtonRef.current?.click()
   }
 
   async function handlePreviewStore() {
-    // const _id = await createAffiliate()
-    const _id = '6'
-    navigate(`/store-preview/${_id}`)
+    navigate(`/store-preview/${params.get('store_id')}`, { replace: true })
   }
 
   return (
@@ -118,6 +117,7 @@ function CreateStoreScreen() {
         {!done && (
           <>
             <EmailConfirmationPopup
+              trigger={popUpButtonRef}
               handleSendEmail={() => handleCreateStore()}
               loading={loading}
               setLoading={setLoading}
@@ -125,11 +125,11 @@ function CreateStoreScreen() {
             <p className="text-center text-sm text-gray-400">
               Created store will stay in preview only mode until approved.
             </p>
-            <div className="flex w-full items-center gap-x-2">
+            {/* <div className="flex w-full items-center gap-x-2">
               <div className="h-1 flex-1 border"></div>
               <p className="text-white">OR</p>
               <div className="h-1 flex-1 border"></div>
-            </div>
+            </div> */}
           </>
         )}
         {done && (
@@ -146,11 +146,16 @@ function CreateStoreScreen() {
           </>
         )}
       </div>
-      <div onClick={() => handlePreviewStore()} className="group flex items-center justify-center gap-x-2">
-        <p className="cursor-pointer  text-lg font-medium text-white hover:text-green-400">Preview on companion app</p>
-        <ArrowRightCircle className="mt-1 h-5 w-5 text-white transition-all duration-300 ease-in group-hover:translate-x-2 group-hover:text-green-400" />
-      </div>
-      <Controlbuttons title="Finish" onClick={() => handleFinish()} />
+      {/* PREVIEW BUTTON */}
+      {done && (
+        <div onClick={() => handlePreviewStore()} className="group flex items-center justify-center gap-x-2">
+          <p className="cursor-pointer  text-lg font-medium text-white hover:text-green-400">
+            Preview on companion app
+          </p>
+          <ArrowRightCircle className="mt-1 h-5 w-5 text-white transition-all duration-300 ease-in group-hover:translate-x-2 group-hover:text-green-400" />
+        </div>
+      )}
+      <Controlbuttons finished={done} title="Finish" onClick={() => handleFinish()} />
       <div className=" max-w-7xl pt-12 ">
         <div className="flex items-center gap-x-2">
           <p className="fontmedium text-sm text-white">

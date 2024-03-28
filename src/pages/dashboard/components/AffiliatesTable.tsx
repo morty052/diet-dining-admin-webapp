@@ -8,7 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from '../../../components/ui/table'
-import { Button } from 'src/components/ui/button'
+import { Button } from '../../../components/ui/button'
 import { ChevronDown } from 'lucide-react'
 import {
   DropdownMenu,
@@ -16,8 +16,8 @@ import {
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from 'src/components/ui/dropdown-menu'
-import { Tcart } from 'src/types/cart'
+} from '../../../components/ui/dropdown-menu'
+import { Tcart } from '../../../types/cart'
 
 type Props = {
   affiliates: any

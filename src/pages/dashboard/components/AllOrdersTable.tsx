@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../../components/ui/table'
-import { Button } from 'src/components/ui/button'
+import { Button } from '../../../components/ui/button'
 import { ChevronRight } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
-import CartModal from 'src/components/modals/CartModal'
+import CartModal from '../../../components/modals/CartModal'
 
 type Props = {
   title?: string
@@ -108,13 +108,14 @@ function AllOrdersTable({ title, orders }: Props) {
             {orders?.map((order) => {
               const { _id, status, total, products, user, vendor } = order
               const { store_name } = vendor
+              const { email } = user
               return (
                 <TableRow onClick={() => console.log('clicked')} key={order._id} className="">
                   <TableCell className=" border-x text-center font-medium text-white">{store_name}</TableCell>
                   <TableCell className="border-x  text-center text-white ">{'status'}</TableCell>
                   {/* CART */}
                   <CartModal cart={products} />
-                  <TableCell className="border-x text-center text-white ">{user}</TableCell>
+                  <TableCell className="border-x text-center text-white ">{email}</TableCell>
                   <TableCell className="border-x  text-center text-white ">${total}</TableCell>
                 </TableRow>
               )

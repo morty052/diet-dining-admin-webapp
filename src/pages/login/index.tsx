@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react'
 import { Route, Routes, useNavigate, useParams, useSearchParams } from 'react-router-dom'
-import { Button } from 'src/components/ui/button'
+import { Button } from '../..//components/ui/button'
 import { LockIcon } from 'lucide-react'
 import heroImage from '../../assets/hero-image.png'
 import OtpInput from './components/OtpInput'
 import OnboardingRoutes from './routes/OnboardingRoutes'
-import { baseUrl } from 'src/constants/baseUrl'
+import { baseUrl } from '../../constants/baseUrl'
 
 function MainLoginPage() {
   const [email, setEmail] = useState('')
@@ -16,7 +16,20 @@ function MainLoginPage() {
 
   async function handleAdminRoute() {
     try {
-      const res = await fetch(`${baseUrl}/admin/confirm-admin-email?admin_email=${email}&admin_password=${password}`)
+      const options = {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          admin_email: email.trim(),
+          admin_password: password,
+        }),
+      }
+      const res = await fetch(
+        `${baseUrl}/admin/confirm-admin-email?admin_email=${email.trim()}&admin_password=${password}`,
+        options,
+      )
       // const res = await fetch(`https://diet-dining-server.onrender.com/admin/confirm-admin-email?admin_email=${email}&admin_password=${password}`)
       const data = await res.json()
       const { _id, firstname, status, onboarded } = data
@@ -46,8 +59,19 @@ function MainLoginPage() {
 
   async function handleAffiliateRoute() {
     try {
+      const options = {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          affiliate_email: email.trim(),
+          password,
+        }),
+      }
       const res = await fetch(
-        `${baseUrl}/affiliates/confirm-affiliate-email?affiliate_email=${email}&password=${password}`,
+        `${baseUrl}/affiliates/confirm-affiliate-email?affiliate_email=${email.trim()}&password=${password}`,
+        options,
       )
       // const res = await fetch(`https://diet-dining-server.onrender.com/admin/confirm-admin-email?admin_email=${email}&password=${password}`)
       const data = await res.json()
@@ -110,7 +134,7 @@ function MainLoginPage() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Email address"
-            type="text"
+            type="email"
           />
           <input
             value={password}
@@ -244,7 +268,7 @@ const SecurePassPage = () => {
 
 export const LoginPage = () => {
   return (
-    <section className="flex flex-col bg-gradient-to-b from-gray-800 to-gray-900">
+    <section className="flex min-h-screen flex-col bg-gradient-to-b from-gray-800 to-gray-900">
       <div className="max-w-7xl px-6 py-4">
         <p className="text-3xl  font-black text-white">
           Diet <span className="text-green-400">Dining</span>

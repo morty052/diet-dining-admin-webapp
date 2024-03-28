@@ -1,7 +1,8 @@
-import { Button } from 'src/components/ui/button'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from 'src/components/ui/tabs'
+import { Button } from '../../../components/ui/button'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../../components/ui/tabs'
 import AffiliateOrderTable from '../components/AffiliateOrderTable'
 import { useQuery } from '@tanstack/react-query'
+import { baseUrl } from '../../../constants/baseUrl'
 
 function DownLoadReportButton() {
   return (
@@ -103,12 +104,12 @@ const completed_orders = [
 function AffiliateOrders() {
   async function fetchOrders() {
     const _id = localStorage.getItem('_id')
-    const res = await fetch(`http://localhost:3000/affiliates/get-affiliate-orders?afilliate_id=${_id}`)
+    const res = await fetch(`${baseUrl}/affiliates/get-affiliate-orders?afilliate_id=${_id}`)
     const data = await res.json()
     console.log(data)
     return data
   }
-  const { isLoading, data: orders } = useQuery({ queryKey: [''], queryFn: fetchOrders })
+  const { isLoading, data: orders } = useQuery({ queryKey: ['affiliate_orders'], queryFn: fetchOrders })
 
   if (isLoading) {
     return null

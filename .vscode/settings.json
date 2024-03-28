@@ -7,6 +7,5 @@
   "git.ignoreLimitWarning": true,
   "editor.quickSuggestions": {
     "strings": true
-  },
-  "i18n-ally.localesPaths": ["src/i18n", "src/i18n/locales"]
+  }
 }

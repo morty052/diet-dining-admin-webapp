@@ -1,14 +1,6 @@
 import React, { useRef, useState } from 'react'
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '../../../components/ui/table'
-import { Button } from 'src/components/ui/button'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../../components/ui/table'
+import { Button } from '../../../components/ui/button'
 import { ChevronDown } from 'lucide-react'
 import {
   DropdownMenu,
@@ -16,10 +8,10 @@ import {
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from 'src/components/ui/dropdown-menu'
-import { Tcart } from 'src/types/cart'
-import { Tproduct } from 'src/types/product'
-import DescriptionModal from 'src/components/modals/DescriptionModal'
+} from '../../../components/ui/dropdown-menu'
+import { Tcart } from '../../../types/cart'
+import { Tproduct } from '../../../types/product'
+import DescriptionModal from '../../../components/modals/DescriptionModal'
 import { useNavigate } from 'react-router-dom'
 
 type Props = {
@@ -202,7 +194,7 @@ function EditProductTable({ title, products }: Props) {
         <DownLoadReportButton />
       </div>
       <Table>
-        <TableCaption>A list of your recent orders.</TableCaption>
+        {/* <TableCaption>A list of your recent orders.</TableCaption> */}
         <TableHeader>
           <TableRow>
             <TableHead className="text-center text-white">Image</TableHead>

@@ -1,11 +1,12 @@
 import { CalendarIcon, Clock, MapPin, Search, Send, Store, Users } from 'lucide-react'
 import React from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { Button } from 'src/components/ui/button'
+import { Button } from '../../../components/ui/button'
 import { NotificationsTemplateDropDown } from '../components/NotificationsTemplateDropdown'
 import EmojiPicker from 'emoji-picker-react'
-import { autoComplete } from 'src/lib/autoComplete'
-import { Calendar } from 'src/components/ui/calendar'
+import { autoComplete } from '../../../lib/autoComplete'
+import { Calendar } from '../../../components/ui/calendar'
+import { baseUrl } from '../../../constants/baseUrl'
 
 type TnotificationModes = 'BROADCAST' | 'SCHEDULE'
 type TnotificationTypes = 'ALL' | 'AFFILIATES' | 'ZONAL'
@@ -143,11 +144,12 @@ function NotificationModeDisplay({ mode, channel }: { mode: TnotificationModes; 
   return (
     <div className="flex items-center justify-between gap-x-8 py-2">
       {isZonal && (
-        <div className="w-full ">
+        <div className="relative w-full ">
           <input
+            onBlur={() => setTimeout(() => setSuggestions(null), 200)}
             value={searchQuery}
             onChange={(e) => handleAutoComplete(e.target.value)}
-            className="relative h-8 w-full"
+            className=" h-8 w-full px-2"
             type="text"
           />
           {suggestions && (
@@ -155,12 +157,7 @@ function NotificationModeDisplay({ mode, channel }: { mode: TnotificationModes; 
               {suggestions.map((suggestion, index) => (
                 <p
                   onClick={() => {
-                    setStoreAddress({
-                      street: suggestion.address,
-                      city: suggestion.city,
-                      province: suggestion.state,
-                      postal_code: '',
-                    })
+                    setSearchQuery(`${suggestion.address}, ${suggestion.city}, ${suggestion.state}`)
                     setSuggestions(null)
                   }}
                   className="cursor-pointer text-sm text-gray-500 hover:text-dark"
@@ -223,29 +220,61 @@ function Notifications() {
   const CHANNEL = params.get('CHANNEL')
 
   async function HandleSend() {
-    const message = {
-      // to: expoPushToken,
-      sound: 'default',
-      title,
-      body,
-      data: { someData: 'goes here' },
-      type,
+    try {
+      if (!title || !body) {
+        alert('Notification title and body cant be empty')
+        return
+      }
+
+      const message = {
+        // to: expoPushToken,
+        sound: 'default',
+        title,
+        body,
+        data: { someData: 'goes here' },
+        type,
+      }
+
+      console.log(message)
+
+      if (MODE == 'BROADCAST') {
+        console.log('broadcast')
+        const url = `${baseUrl}/utils/notifications/broadcast`
+        const res = await fetch(url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(message),
+        })
+        const data = await res.json()
+        console.log(data)
+        setTitle('')
+        setBody('')
+        return
+      }
+
+      if (MODE == 'SCHEDULE') {
+        console.log('schedule')
+        alert('Scheduling not implemented yet')
+        return
+        const url = `http://localhost:3000/utils/notifications/schedule`
+        const res = await fetch(url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(message),
+        })
+        const data = await res.json()
+        console.log(data)
+        setTitle('')
+        setBody('')
+        return
+      }
+    } catch (error) {
+      console.log(error)
     }
-
-    console.log(message)
-    const url = `http://localhost:3000/notifications`
-
-    const res = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(message),
-    })
-    const data = await res.json()
-    console.log(data)
-    setTitle('')
-    setBody('')
   }
 
   return (
@@ -345,7 +374,7 @@ function Notifications() {
           </div>
         </div>
         {/* RIGHT SIDE */}
-        <div className="hidden w-2/5 border-l border-l-white/20 xl:block ">
+        <div className="hidden w-2/5 border-l border-l-white/20 lg:block ">
           {/* HEADER */}
           <div className="w-full border border-white/10 p-2 md:px-6">
             <p className=" text-xl font-semibold text-light">Sent</p>

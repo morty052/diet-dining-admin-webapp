@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion'
 import Controlbuttons from '../components/ControlButtons'
 import ProgressBar from '../components/ProgressBar'
-import { useNewAffiliate } from 'src/models/newAffiliate'
+import { useNewAffiliate } from '../../../models/newAffiliate'
 import { useNavigate } from 'react-router-dom'
 import React from 'react'
 
@@ -13,6 +13,11 @@ function StoreEmail() {
   const { setAffiliateEmail } = useNewAffiliate()
 
   function handleConfirmemail() {
+    if (email.includes('@dietdining.org')) {
+      alert('You cant use emails associated with diet dining here please enter a different email')
+      return
+    }
+
     if (!email) {
       setError(true)
       return

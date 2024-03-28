@@ -23,7 +23,7 @@ export async function autoComplete(input: string): Promise<suggestions[] | null>
     // Set the headers
     const headers = {
       'Content-Type': 'application/json',
-      'X-Goog-Api-Key': 'AIzaSyA0i6pUgKu9bNTdR_PKL7Pk-8MjDEsZwL8', // Replace with your actual API key
+      'X-Goog-Api-Key': 'AIzaSyA0i6pUgKu9bNTdR_PKL7Pk-8MjDEsZwL8',
     }
 
     // Make the POST request

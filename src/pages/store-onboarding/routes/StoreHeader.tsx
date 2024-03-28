@@ -1,8 +1,8 @@
 import { UploadBody } from '@sanity/client'
 import { motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
-import { sanityClient } from 'src/lib/sanityClient'
-import { useNewAffiliate } from 'src/models/newAffiliate'
+import { sanityClient } from '../../..//lib/sanityClient'
+import { useNewAffiliate } from '../../../models/newAffiliate'
 import ImageInput from '../components/ImageInput'
 import ProgressBar from '../components/ProgressBar'
 

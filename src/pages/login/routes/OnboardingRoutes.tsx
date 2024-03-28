@@ -2,8 +2,8 @@ import { motion } from 'framer-motion'
 import React from 'react'
 import { Route, Routes, useNavigate, useSearchParams } from 'react-router-dom'
 import OnboardingControlbuttons from '../components/OnboardingControlButtons'
-import ProgressBar from 'src/pages/store-onboarding/components/ProgressBar'
-import { baseUrl } from 'src/constants/baseUrl'
+import ProgressBar from '../../../pages/store-onboarding/components/ProgressBar'
+import { baseUrl } from '../../../constants/baseUrl'
 
 function SetNewPasswordScreen({ isAffiliate }: { isAffiliate?: boolean }) {
   const [password, setPassword] = React.useState('')

@@ -7,7 +7,10 @@ export type ISocketContextComponentProps = PropsWithChildren
 const SocketContextComponent: React.FunctionComponent<ISocketContextComponentProps> = (props) => {
   const { children } = props
 
-  const socket = useSocket('ws://localhost:4000/admin', {
+  const socketUrl = 'https://norse-habitat-416400.nn.r.appspot.com/user'
+  // const socketUrl = 'http://localhost:3000/user'
+
+  const socket = useSocket(socketUrl, {
     reconnectionAttempts: 5,
     reconnectionDelay: 1000,
     autoConnect: false,
@@ -57,10 +60,11 @@ const SocketContextComponent: React.FunctionComponent<ISocketContextComponentPro
   }
 
   const SendHandshake = async () => {
-    console.info('Sending handshake to server ...')
+    console.log('Sending handshake to server ...')
 
-    socket.emit('handshake', async (uid: string, users: string[]) => {
-      console.info('User handshake callback message received')
+    const _id = localStorage.getItem('_id')
+    socket.emit('handshake', { _id }, async (uid: string, users: string[]) => {
+      console.log('User handshake callback message received')
       SocketDispatch({ type: 'update_users', payload: users })
       SocketDispatch({ type: 'update_uid', payload: uid })
     })

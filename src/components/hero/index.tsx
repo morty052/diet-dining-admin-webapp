@@ -1,6 +1,7 @@
 import { Button } from '../ui/button'
 import { useState } from 'react'
 import { Route, Routes, useNavigate, useParams } from 'react-router-dom'
+import { baseUrl } from '../../constants/baseUrl'
 
 const LoginPage = () => {
   const [email, setEmail] = useState('')
@@ -8,7 +9,7 @@ const LoginPage = () => {
 
   async function confirmEmail() {
     try {
-      const res = await fetch(`http://localhost:3000/admin/confirm-admin-email?admin_email=${email}`)
+      const res = await fetch(`${baseUrl}/admin/confirm-admin-email?admin_email=${email}`)
       const data = await res.json()
       // const status = data?.status
       const { _id } = data
@@ -40,9 +41,7 @@ const SecurePassPage = () => {
 
   async function confirmOtp() {
     try {
-      const res = await fetch(
-        `http://localhost:3000/admin/confirm-otp?admin_id=4118a74d-0b15-4f81-8cab-135e035cc395&otp=${otp}`,
-      )
+      const res = await fetch(`${baseUrl}/admin/confirm-otp?admin_id=4118a74d-0b15-4f81-8cab-135e035cc395&otp=${otp}`)
       const data = await res.json()
       localStorage.setItem('id', id as string)
       window.location.replace(`/dashboard/${id}`)
